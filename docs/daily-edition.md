@@ -43,6 +43,11 @@ queries return almanac pages, specific ones return stories:
 - `India news <date> <a concrete subject>`
 - `gold silver rate Chennai <date>`
 - `<sport in season> result <date>`
+- **Tamil Nadu's own sport, every day** — the state league or tournament in
+  season, Chennai clubs and franchises, state teams and school championships.
+  A Tamil paper that covers only national cricket is missing its own back
+  page. Search the competition by name: `TNPL <date>`, `Tamil Thalaivas`,
+  `Tamil Nadu <sport> championship <date>`.
 - world: search the running story by name, not "world news"
 
 ## 2. Write it
@@ -59,8 +64,10 @@ what makes the paper is the writing.
    `sources` block on the last page.
 3. **Print only what is corroborated.** If two sources disagree, or a search
    summary looks garbled, leave it out. A shorter paper is not a worse one.
-4. **Say what this edition is.** It is compiled from other people's
-   reporting. The masthead ear and the sources note say so; keep them.
+4. **Say what this edition is** — but briefly. The masthead ear, the `source`
+   line under each story and the sources box on the last page carry it. Do
+   **not** run a separate "about this edition" panel; the credits do the work
+   and the panel only takes space a story could use.
 5. **Do not translate a claim into a stronger one.** "may rise" is not
    "will rise"; "sources said" is not "the government announced".
 
@@ -125,6 +132,14 @@ morning is recoverable; a paper of invented news is not.
 ---
 
 ## Reference
+
+**Standing sections.** Tamil Nadu and Chennai lead; then the weather page with
+its district map; then world and business; then sport, which always includes a
+Tamil Nadu sports panel alongside any national or international result.
+
+**Pictures.** The drawn stand-ins are credited `விளக்கப் படம்` — illustration.
+Never credit them as a photograph (`கோப்புப் படம்`, `நிருபர் படம்`): they are
+not one. Use those credits only for a real image supplied with `src`.
 
 - Content schema, block types, press presets: `README.md`
 - Weather page and district map: `README.md`, `tools/build_map.py`
