@@ -134,6 +134,7 @@ pin itself with `"at": [col, row]`.
 | `classifieds` | small ads in two columns |
 | `picture` | a standalone photograph with a caption |
 | `weather` | the district weather map and its panels |
+| `sources` | a numbered box crediting where the day's copy came from |
 
 ### The weather page
 
@@ -174,6 +175,68 @@ under a halftone screen — roughly what a photograph looks like once it has bee
 through a newspaper press. Available scenes: `portrait`, `dais`, `assembly`,
 `city`, `stadium`, `field`, `lab`, `crowd`, `chart`, `stage`. Give a figure a
 `src` instead and it uses your image.
+
+## Two editions in the repository
+
+| file | what it is |
+| --- | --- |
+| `content/edition.json` | the morning paper — a 350 × 520 mm broadsheet, **fictional** content, built to show the layout engine at full stretch |
+| `content/evening-edition.json` | an evening tabloid, 279 × 432 mm, in colour, carrying **real news of 28 August 2026** compiled from published reports |
+
+```bash
+python3 build.py content/evening-edition.json --preview
+```
+
+### About the evening edition
+
+It is a compilation, not reporting. Every story was written from published
+reports of that day, each one credited under the item and listed in full in
+the sources box on page 4. The source articles themselves could not be opened
+during the build — only search-result summaries were available — so the paper
+says that on page 2 and again under the sources, and the copy stays inside
+what those summaries actually assert. The weather page is the exception in
+kind rather than degree: its map is the India Meteorological Department's own
+forecast for the day, categorised by district.
+
+If you rebuild it for a different day, replace the stories and the sources box
+together. A credit that no longer matches its story is worse than no credit.
+
+## Colour
+
+Print editions run black on newsprint. An edition read on a screen has no ink
+to pay for, so three things can carry colour, and the same edition file still
+prints correctly in mono if you leave them out.
+
+- **`page.accent`** — a section colour. The section flag, folio number and
+  story rules on that page take it. The evening edition runs red for the front,
+  teal for Chennai, blue for weather, violet for world and sport.
+- **`palette`** — the colour ramp the stand-in pictures are drawn on, set for
+  the whole edition or per page, and overridable on a single figure. Choose
+  from `grey` (the print default), `civic`, `dusk`, `field`, `sea`, `rose`.
+  Each is the same seven tonal steps, so a scene drawn for one works on any.
+- **The weather map** — each rainfall category names its own `color`.
+
+```json
+{ "number": 3, "section": "வானிலை", "accent": "#1d4ed8", "palette": "sea",
+  "blocks": [ ... ] }
+```
+
+## Crediting sources
+
+A `sources` block sets a numbered, two-column box of credits:
+
+```json
+{
+  "type": "sources",
+  "col": 5, "row": 2,
+  "title": "இந்த இதழின் செய்தி ஆதாரங்கள்",
+  "items": [ { "label": "News Today — ‘ஆகம்’ திட்டம்", "url": "newstodaynet.com/2026/08/28/…" } ],
+  "note": "மூலப் பக்கங்கள் நேரடியாக அணுகப்படவில்லை."
+}
+```
+
+Any story can also carry a `source` string, which prints as a credit line
+under its last column.
 
 ## Press sizes
 
@@ -220,8 +283,9 @@ assets/js/fit.js          copy fitting
 assets/fonts/             Noto Serif/Sans Tamil, variable
 assets/maps/tamilnadu.json
 tools/build_map.py        regenerate the map from boundary data
-content/edition.json      the sample edition
-output/edition.pdf        the sample edition, printed
+content/edition.json      the morning broadsheet (fictional content)
+content/evening-edition.json  the evening tabloid (real news, in colour)
+output/*.pdf              both editions, printed
 ```
 
 ## Licences

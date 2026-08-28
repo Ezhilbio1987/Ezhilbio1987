@@ -11,8 +11,28 @@ import hashlib
 
 W, H = 300, 200
 
-# Warm grey scale, darkest first — newsprint never reaches true black.
-TONE = ["#26242c", "#3d3a45", "#57535f", "#77727e", "#a49fa8", "#cbc6c0", "#e6e1d7"]
+# Seven steps, darkest first. Print editions run the grey ramp — newsprint
+# never reaches true black. An online edition is not paying for ink, so the
+# scenes can carry colour; each palette is the same seven steps tinted, so a
+# scene drawn against one works against any of them.
+PALETTES = {
+    "grey":  ["#26242c", "#3d3a45", "#57535f", "#77727e", "#a49fa8", "#cbc6c0", "#e6e1d7"],
+    "civic": ["#111d3d", "#1f3companion", "#2f5390", "#5b7fbe", "#9db4d8", "#c9d7ea", "#e8eef7"],
+    "dusk":  ["#331a12", "#5c2b18", "#8c4420", "#c06a2e", "#e0975a", "#f0c496", "#fae4cd"],
+    "field": ["#14301c", "#1f4a2a", "#356b3c", "#5e9455", "#94bd80", "#c3ddad", "#e6f2d8"],
+    "sea":   ["#062b33", "#0c4a54", "#136e78", "#2c98a0", "#6dbfc2", "#a9dcdb", "#dcf1ef"],
+    "rose":  ["#3a0f1c", "#5f1a2c", "#8c2740", "#bb4a63", "#d98395", "#eeb7c2", "#fadfe5"],
+}
+PALETTES["civic"][1] = "#1f3a68"
+
+# The palette each scene reaches for when the edition does not name one.
+SCENE_PALETTE = {
+    "portrait": "civic", "dais": "civic", "assembly": "civic", "crowd": "civic",
+    "city": "dusk", "stadium": "field", "field": "field", "lab": "sea",
+    "chart": "civic", "stage": "rose",
+}
+
+TONE = PALETTES["grey"]
 
 
 class _Rand:
@@ -294,19 +314,38 @@ SCENES = {
 }
 
 
-def render(scene: str, seed: str = "") -> str:
-    """Return an inline SVG for the named scene."""
+def render(scene: str, seed: str = "", palette: str | None = None) -> str:
+    """Return an inline SVG for the named scene.
+
+    ``palette`` picks the colour ramp; omit it and the scene uses the one that
+    suits it. Pass ``"grey"`` for a print edition.
+    """
+    global TONE
     if scene not in SCENES:
         raise KeyError(
             f"unknown picture scene {scene!r}; choose one of {', '.join(sorted(SCENES))}"
         )
-    uid = hashlib.sha1(f"{scene}:{seed}".encode()).hexdigest()[:6]
+    name = palette or SCENE_PALETTE.get(scene, "grey")
+    if name not in PALETTES:
+        raise KeyError(
+            f"unknown picture palette {name!r}; choose one of {', '.join(sorted(PALETTES))}"
+        )
+    uid = hashlib.sha1(f"{scene}:{seed}:{name}".encode()).hexdigest()[:6]
     rand = _Rand(f"{scene}:{seed}")
-    inner = SCENES[scene](rand, uid)
+    previous, TONE = TONE, PALETTES[name]
+    try:
+        inner = SCENES[scene](rand, uid)
+    finally:
+        TONE = previous
+    previous, TONE = TONE, PALETTES[name]
+    try:
+        defs = _defs(uid)
+    finally:
+        TONE = previous
     return (
         f'<svg viewBox="0 0 {W} {H}" preserveAspectRatio="xMidYMid slice" '
         f'xmlns="http://www.w3.org/2000/svg" role="img">'
-        f"{_defs(uid)}{inner}"
+        f"{defs}{inner}"
         f'<rect width="{W}" height="{H}" fill="url(#vig{uid})"/>'
         f'<rect width="{W}" height="{H}" fill="url(#ht{uid})"/>'
         f"</svg>"

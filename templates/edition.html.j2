@@ -47,7 +47,8 @@
 {%- endmacro %}
 
 {%- for page in pages %}
-<section class="page" data-page="{{ page.number }}" style="--cols: {{ page.cols }}; --rows: {{ page.rows }};">
+<section class="page" data-page="{{ page.number }}"
+         style="--cols: {{ page.cols }}; --rows: {{ page.rows }};{% if page.accent %} --accent: {{ page.accent }};{% endif %}">
 
   {%- if page.kind == 'front' %}
   <header class="masthead">
@@ -108,6 +109,7 @@
         </p>
         {%- endif %}
         {{ story_body(b) }}
+        {%- if b.source %}<p class="story__source" lang="ta">{{ b.source }}</p>{% endif %}
       </article>
 
       {%- elif b.type == 'briefs' %}
@@ -212,6 +214,19 @@
           </div>
         </div>
         {%- if b.note %}<p class="wx__note" lang="ta">{{ b.note }}</p>{% endif %}
+      </section>
+
+      {%- elif b.type == 'sources' %}
+      <section class="panel panel--plain sources" data-fit data-fit-id="{{ b.id }}">
+        <h3 class="panel__title" lang="ta">{{ b.title }}</h3>
+        <div class="panel__body" lang="ta" data-fit-flow>
+          <ol class="sources__list" data-fit-trim>
+            {%- for it in b["items"] %}
+            <li><strong>{{ it.label }}</strong><span class="sources__url">{{ it.url }}</span></li>
+            {%- endfor %}
+          </ol>
+          {%- if b.note %}<p class="sources__note">{{ b.note }}</p>{% endif %}
+        </div>
       </section>
 
       {%- elif b.type == 'picture' %}

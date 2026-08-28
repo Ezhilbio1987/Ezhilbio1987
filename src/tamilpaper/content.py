@@ -13,7 +13,7 @@ from . import artwork, press, weather
 from .layout import place_blocks, coverage
 
 BLOCK_TYPES = {"story", "briefs", "index", "table", "quote", "advert", "classifieds",
-               "picture", "weather"}
+               "picture", "weather", "sources"}
 
 REQUIRED = {
     "story": ("headline",),
@@ -25,6 +25,7 @@ REQUIRED = {
     "classifieds": ("title", "ads"),
     "picture": ("figure",),
     "weather": ("title", "categories"),
+    "sources": ("title", "items"),
 }
 
 
@@ -39,7 +40,7 @@ DEFAULTS: dict[str, dict] = {
     "story": {
         "variant": "minor", "rule": "", "editorial": False, "jump": "",
         "standfirst": "", "kicker": "", "deck": "", "byline": None,
-        "place": "", "columns": 1,
+        "place": "", "columns": 1, "source": "",
     },
     "briefs": {"plain": False},
     "index": {},
@@ -49,9 +50,11 @@ DEFAULTS: dict[str, dict] = {
     "classifieds": {},
     "picture": {"rule": ""},
     "weather": {"map": "tamilnadu", "labels": True, "hide_labels": []},
+    "sources": {"note": ""},
 }
 
-FIGURE_DEFAULTS = {"svg": "", "src": "", "alt": "", "caption": "", "credit": "", "ratio": "3 / 2"}
+FIGURE_DEFAULTS = {"svg": "", "src": "", "alt": "", "caption": "", "credit": "",
+                   "ratio": "3 / 2", "palette": None}
 
 
 def _apply_defaults(block: dict) -> None:
@@ -62,20 +65,21 @@ def _apply_defaults(block: dict) -> None:
         block["byline"].setdefault("role", "")
 
 
-def _resolve_figure(fig: dict, seed: str) -> dict:
+def _resolve_figure(fig: dict, seed: str, palette: str | None = None) -> dict:
     """Turn ``scene`` into inline SVG artwork; leave a real ``src`` alone."""
     fig = dict(fig)
     for key, value in FIGURE_DEFAULTS.items():
         fig.setdefault(key, value)
     if fig.get("scene") and not fig.get("src"):
         try:
-            fig["svg"] = artwork.render(fig["scene"], fig.get("seed", seed))
+            fig["svg"] = artwork.render(fig["scene"], fig.get("seed", seed),
+                                        fig.get("palette") or palette)
         except KeyError as err:
             raise ContentError(str(err)) from err
     return fig
 
 
-def _build_flow(block: dict, seed: str) -> list[dict]:
+def _build_flow(block: dict, seed: str, palette: str | None = None) -> list[dict]:
     """Interleave paragraphs, crossheads and inline pictures into one flow.
 
     ``body`` is a list of paragraph strings. A paragraph starting with ``## ``
@@ -89,7 +93,7 @@ def _build_flow(block: dict, seed: str) -> list[dict]:
 
     figures: list[tuple[int, dict]] = []
     for i, fig in enumerate(block.get("figures") or ([block["figure"]] if "figure" in block else [])):
-        figures.append((int(fig.get("after", 1)), _resolve_figure(fig, f"{seed}:{i}")))
+        figures.append((int(fig.get("after", 1)), _resolve_figure(fig, f"{seed}:{i}", palette)))
     figures.sort(key=lambda pair: pair[0])
 
     flow: list[dict] = []
@@ -144,6 +148,7 @@ def load(path: str | Path) -> dict:
     data["press"] = preset.as_dict()
 
     paper = data["paper"]
+    data.setdefault("palette", None)
     data["dateline_ta"] = paper.get("dateline_ta") or []
     data["dateline_en"] = paper.get("dateline_en") or []
 
@@ -155,6 +160,9 @@ def load(path: str | Path) -> dict:
         cols = int(page.get("cols") or preset.cols)
         rows = int(page.get("rows") or preset.rows)
         page["cols"], page["rows"] = cols, rows
+        # A section colour, and a default palette for the pictures on the page.
+        page.setdefault("accent", "")
+        palette = page.get("palette") or data.get("palette")
         page_label = f"page {page['number']}"
 
         blocks = page.get("blocks") or []
@@ -167,9 +175,9 @@ def load(path: str | Path) -> dict:
             _apply_defaults(block)
             seed = f"{block['id']}"
             if block["type"] == "story":
-                block["flow"] = _build_flow(block, seed)
+                block["flow"] = _build_flow(block, seed, palette)
             elif block["type"] == "picture":
-                block["figure"] = _resolve_figure(block["figure"], seed)
+                block["figure"] = _resolve_figure(block["figure"], seed, palette)
             elif block["type"] == "weather":
                 try:
                     weather.prepare(block)

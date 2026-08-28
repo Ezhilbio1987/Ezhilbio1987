@@ -713,14 +713,25 @@ html, body {
   border-bottom: var(--rule-thin) solid var(--accent);
 }
 
-.wx__legend { list-style: none; margin: 0; padding: 0; flex: 1 1 auto; display: flex; flex-direction: column; }
+.wx__legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  /* Editions differ in how many categories the day warrants — two on a quiet
+     day, five in a storm. Spacing them evenly reads as deliberate at either
+     end, where stretching each one leaves a hole between two. */
+  justify-content: space-evenly;
+}
 .wx__cat {
   display: grid;
   grid-template-columns: 3.6mm 1fr;
   gap: 1.8mm;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   align-content: center;
-  padding: 1.2mm 0;
+  padding: 1.6mm 0;
   border-bottom: var(--rule-hair) solid var(--rule-ink);
 }
 .wx__cat:last-child { border-bottom: 0; }
@@ -815,4 +826,89 @@ html, body {
   font-size: 6.4pt;
   line-height: 1.32;
   color: var(--ink-faint);
+}
+
+/* --------------------------------------------------------------------------
+   11. Online edition
+   A print edition is limited by what the press can hold and what ink costs.
+   An edition read on a screen is not, so sections carry their own colour and
+   the pictures are set in colour rather than on the grey ramp. Everything
+   below tints existing furniture — the make-up does not change, so the same
+   edition file still prints correctly in mono.
+   -------------------------------------------------------------------------- */
+
+/* Each page sets its own --accent inline; these pick it up. */
+.section-flag__name,
+.folio-bar__no,
+.folio-bar__mid { color: var(--accent); }
+.folio-bar { border-bottom-color: var(--accent); }
+
+.story__source {
+  font-family: var(--sans);
+  font-size: calc(6.6pt * var(--fit));
+  font-style: normal;
+  color: var(--ink-faint);
+  text-indent: 0;
+  margin: 1.4mm 0 0;
+  padding-top: 1mm;
+  border-top: var(--rule-hair) solid var(--rule-ink);
+}
+
+/* Where the day's copy came from. An edition compiled from other people's
+   reporting has to say so, and say where. */
+.sources { border-color: var(--accent); }
+.sources__list {
+  list-style: decimal;
+  margin: 0;
+  padding-left: 4.4mm;
+  font-size: 0.94em;
+  columns: 2;
+  column-gap: var(--gutter);
+  column-rule: var(--rule-hair) solid var(--rule-ink);
+}
+.sources__list li { break-inside: avoid; }
+.sources__list li {
+  padding: 0.9mm 0;
+  border-bottom: var(--rule-hair) dotted var(--rule-ink);
+  line-height: 1.3;
+}
+.sources__list li:last-child { border-bottom: 0; }
+.sources__list strong {
+  display: block;
+  font-family: var(--sans);
+  font-weight: 700;
+  color: var(--ink);
+}
+.sources__url {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.86em;
+  color: var(--brand);
+  word-break: break-all;
+}
+.sources__note {
+  margin: 1.4mm 0 0;
+  padding-top: 1mm;
+  border-top: var(--rule-hair) solid var(--rule-ink);
+  font-size: 0.88em;
+  line-height: 1.32;
+  color: var(--ink-faint);
+}
+
+/* Evening edition: the nameplate and dateline bar take the paper's evening
+   colour rather than the morning blue. */
+.page--evening .nameplate__name { color: var(--brand); }
+.page--evening .dateline { background: var(--brand); }
+.edition-flash {
+  display: inline-block;
+  font-family: var(--sans);
+  font-weight: 900;
+  font-size: 8pt;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--accent);
+  padding: 0.8mm 2.4mm;
+  margin-left: 2.5mm;
+  vertical-align: 0.35em;
 }
