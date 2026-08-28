@@ -173,9 +173,9 @@ def sources_block(stories: list[Story], width: int, height: int) -> dict:
         "columns": 1 if len(seen) <= 3 else 2,
         "title": "இந்த இதழின் செய்தி ஆதாரங்கள்",
         "items": [{"label": name, "url": url} for name, url in seen.items()],
-        "note": "இந்தப் பதிப்பு மேற்கண்ட ஊடகங்களின் வெளியான செய்திகளிலிருந்து "
-                "தானியங்கி முறையில் தொகுக்கப்பட்டது. ஒவ்வொரு செய்தியின் "
-                "முழு விவரத்துக்கும் மூல ஊடகத்தைப் பார்க்கவும்.",
+        # No standing note under the list. The credits are the statement; a
+        # paragraph repeating them in prose only takes room from the page.
+        "note": "",
     }
 
 
