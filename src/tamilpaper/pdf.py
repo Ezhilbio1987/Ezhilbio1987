@@ -38,6 +38,33 @@ def _chromium_path() -> str | None:
     return None
 
 
+def compress(pdf_path: Path) -> tuple[int, int]:
+    """Squeeze the finished PDF, if the tooling for it is installed.
+
+    Chromium writes a correct PDF but a loose one — objects go out
+    uncompressed and unreferenced ones are left behind. Repacking typically
+    halves the file, which matters: these are read on phones, where a large
+    download simply stalls.
+
+    Returns (before, after) in bytes; equal values mean nothing was done.
+    """
+    before = pdf_path.stat().st_size
+    try:
+        import pymupdf                      # optional
+    except ImportError:
+        return before, before
+    try:
+        document = pymupdf.open(pdf_path)
+        packed = document.tobytes(garbage=4, deflate=True, clean=True)
+        document.close()
+    except Exception:
+        return before, before               # never lose a good PDF to this
+    if len(packed) < before:
+        pdf_path.write_bytes(packed)
+        return before, len(packed)
+    return before, before
+
+
 def print_pdf(html_path: Path, pdf_path: Path, press: dict,
               preview_png: Path | None = None, preview_dpi: int = 96) -> list[dict]:
     """Render ``html_path`` to ``pdf_path``. Returns the copy-fitting report."""

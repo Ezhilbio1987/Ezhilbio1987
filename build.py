@@ -85,6 +85,7 @@ def main(argv: list[str] | None = None) -> int:
 
     render.render_html(edition, html_path)
     report = pdf.print_pdf(html_path, out_pdf, edition["press"], preview_png=preview)
+    before, after = pdf.compress(out_pdf)
 
     if not args.keep_html:
         html_path.unlink(missing_ok=True)
@@ -98,7 +99,10 @@ def main(argv: list[str] | None = None) -> int:
         pages = len(edition["pages"])
         size = f"{edition['press']['width']} × {edition['press']['height']}"
         print(f"{edition['paper']['name']} — {pages} page(s), {size}")
-        print(f"  PDF     {out_pdf}")
+        size = f"{after / 1024 / 1024:.1f} MB"
+        if after < before:
+            size += f" (from {before / 1024 / 1024:.1f} MB)"
+        print(f"  PDF     {out_pdf}  ·  {size}")
         if preview:
             print(f"  proof   {preview}")
         if adjusted:

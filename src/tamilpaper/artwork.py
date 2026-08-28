@@ -56,8 +56,8 @@ def _defs(uid: str) -> str:
     """Halftone screen plus a soft vertical gradient for depth."""
     return f"""
   <defs>
-    <pattern id="ht{uid}" width="3" height="3" patternUnits="userSpaceOnUse">
-      <circle cx="1.5" cy="1.5" r="0.62" fill="#000" opacity="0.16"/>
+    <pattern id="ht{uid}" width="4" height="4" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="0.85" fill="#000" opacity="0.17"/>
     </pattern>
     <linearGradient id="sky{uid}" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="{TONE[5]}"/>
@@ -342,11 +342,17 @@ def render(scene: str, seed: str = "", palette: str | None = None) -> str:
         defs = _defs(uid)
     finally:
         TONE = previous
+    # The halftone screen is what a photograph looks like on newsprint, so it
+    # belongs on the grey ramp and nowhere else. It is also expensive: the
+    # printer expands the pattern into one circle per cell, thousands per
+    # picture, and that is most of the weight of a finished PDF. A colour
+    # edition read on a phone wants neither the look nor the megabytes.
+    screen = f'<rect width="{W}" height="{H}" fill="url(#ht{uid})"/>' if name == "grey" else ""
     return (
         f'<svg viewBox="0 0 {W} {H}" preserveAspectRatio="xMidYMid slice" '
         f'xmlns="http://www.w3.org/2000/svg" role="img">'
         f"{defs}{inner}"
         f'<rect width="{W}" height="{H}" fill="url(#vig{uid})"/>'
-        f'<rect width="{W}" height="{H}" fill="url(#ht{uid})"/>'
+        f"{screen}"
         f"</svg>"
     )

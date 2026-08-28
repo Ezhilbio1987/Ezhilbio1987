@@ -85,7 +85,12 @@ whole pipeline exists to prevent.
 
 ## 4. Publish
 
+Keep the last 30 editions and drop the rest — a paper a day at a couple of
+megabytes would grow the repository by about a gigabyte a year, and nothing is
+lost that cannot be rebuilt from the edition file beside it:
+
 ```bash
+ls -1 output/daily/*.pdf | sort | head -n -30 | xargs -r git rm --quiet
 git add content/daily.json output/daily/
 git commit -m "Edition of <date>"
 git push origin claude/tamil-newspaper-creation-8toaev
@@ -98,8 +103,9 @@ it is the reliable route on a phone:
 https://github.com/Ezhilbio1987/Ezhilbio1987/raw/claude/tamil-newspaper-creation-8toaev/output/daily/<date>.pdf
 ```
 
-If the PDF is over about 4 MB, also render the pages to PNG and send those;
-large downloads stall on mobile.
+`build.py` repacks the PDF on the way out, which roughly halves it. If it is
+still over about 4 MB, also render the pages to PNG and send those; large
+downloads stall on mobile.
 
 ```bash
 python3 -c "
