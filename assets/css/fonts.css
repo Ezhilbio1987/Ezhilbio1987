@@ -1,0 +1,61 @@
+/* Noto Serif Tamil / Noto Sans Tamil, variable cuts — SIL Open Font License 1.1.
+   See LICENSE-NotoSerifTamil.txt and LICENSE-NotoSansTamil.txt in ../fonts/.
+
+   Both faces carry a weight axis (100–900) and, importantly for newspaper
+   setting, a width axis (62.5–100%). Narrow columns of Tamil justify badly at
+   full width — the words are long, so few fit on a line and the inter-word
+   spaces stretch into rivers. Condensing the face is how news text faces have
+   always solved this; here it is one `font-stretch` declaration away. */
+
+@font-face {
+  font-family: "Paper Serif";
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62.5% 100%;
+  src: url("../fonts/noto-serif-tamil-tamil-standard-normal.woff2") format("woff2-variations");
+  unicode-range: U+0964-0965, U+0B82-0BFA, U+200C-200D, U+20B9, U+25CC;
+  font-display: block;
+}
+@font-face {
+  font-family: "Paper Serif";
+  font-style: italic;
+  font-weight: 100 900;
+  font-stretch: 62.5% 100%;
+  src: url("../fonts/noto-serif-tamil-tamil-standard-italic.woff2") format("woff2-variations");
+  unicode-range: U+0964-0965, U+0B82-0BFA, U+200C-200D, U+20B9, U+25CC;
+  font-display: block;
+}
+@font-face {
+  font-family: "Paper Serif";
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62.5% 100%;
+  src: url("../fonts/noto-serif-tamil-latin-standard-normal.woff2") format("woff2-variations");
+  font-display: block;
+}
+@font-face {
+  font-family: "Paper Serif";
+  font-style: italic;
+  font-weight: 100 900;
+  font-stretch: 62.5% 100%;
+  src: url("../fonts/noto-serif-tamil-latin-standard-italic.woff2") format("woff2-variations");
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Paper Sans";
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62.5% 100%;
+  src: url("../fonts/noto-sans-tamil-tamil-standard-normal.woff2") format("woff2-variations");
+  unicode-range: U+0964-0965, U+0B82-0BFA, U+200C-200D, U+20B9, U+25CC;
+  font-display: block;
+}
+@font-face {
+  font-family: "Paper Sans";
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62.5% 100%;
+  src: url("../fonts/noto-sans-tamil-latin-standard-normal.woff2") format("woff2-variations");
+  font-display: block;
+}

@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<title>{{ paper.name }} — {{ paper.date_ta }}</title>
+<link rel="stylesheet" href="{{ css_href }}">
+<style>
+  @page { size: {{ press.width }} {{ press.height }}; margin: 0; }
+  :root {
+    --page-w: {{ press.width }};
+    --page-h: {{ press.height }};
+    --margin-top: {{ press.margin_top }};
+    --margin-side: {{ press.margin_side }};
+    --margin-bottom: {{ press.margin_bottom }};
+    --gutter: {{ press.gutter }};
+    --body-size: {{ press.body_size }};
+  }
+</style>
+</head>
+<body>
+
+{%- macro figure(fig, extra) %}
+<figure class="figure {{ extra }}">
+  <div class="figure__frame" style="aspect-ratio: {{ fig.ratio | default('3 / 2') }};">
+    {%- if fig.svg %}{{ fig.svg }}
+    {%- elif fig.src %}<img src="{{ fig.src }}" alt="{{ fig.alt | default('') }}">
+    {%- endif %}
+  </div>
+  {%- if fig.caption %}
+  <figcaption class="figure__caption" lang="ta">{{ fig.caption }}
+    {%- if fig.credit %} <span class="figure__credit">— {{ fig.credit }}</span>{% endif %}
+  </figcaption>
+  {%- endif %}
+</figure>
+{%- endmacro %}
+
+{%- macro story_body(b) %}
+<div class="story__body" lang="ta" data-fit-flow data-fit-trim data-columns="{{ b.columns | default(1) }}">
+  {%- for item in b.flow %}
+  {%- if item.kind == 'figure' %}{{ figure(item.figure, 'figure--inline') }}
+  {%- elif item.kind == 'crosshead' %}<h4>{{ item.text }}</h4>
+  {%- elif item.kind == 'lede' %}<p><span class="place">{{ b.place }}:</span> {{ item.text }}</p>
+  {%- else %}<p>{{ item.text }}</p>
+  {%- endif %}
+  {%- endfor %}
+</div>
+{%- endmacro %}
+
+{%- for page in pages %}
+<section class="page" data-page="{{ page.number }}" style="--cols: {{ page.cols }}; --rows: {{ page.rows }};">
+
+  {%- if page.kind == 'front' %}
+  <header class="masthead">
+    <div class="masthead__row">
+      <div class="ear" lang="ta">
+        {%- for line in paper.credo %}{{ line }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+        <hr class="ear__rule">
+        <span class="ear__small">{{ paper.credo_sub }}</span>
+      </div>
+      <div class="nameplate">
+        <h1 class="nameplate__name" lang="ta" data-fit-width>{{ paper.name }}</h1>
+        <div class="nameplate__sub">
+          <p class="nameplate__latin">{{ paper.latin_name }}</p>
+          <p class="nameplate__tag" lang="ta">{{ paper.tagline }}</p>
+        </div>
+        <p class="nameplate__reg">{{ paper.registration }}</p>
+      </div>
+      <div class="ear ear--right">
+        {%- for line in paper.ear_right %}{{ line }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+        <hr class="ear__rule">
+        <span class="ear__small">{{ paper.ear_right_sub }}</span>
+      </div>
+    </div>
+    <div class="dateline">
+      <div class="dateline__line dateline__line--ta" lang="ta">
+        {%- for c in dateline_ta %}<span>{{ c }}</span>{% endfor %}
+      </div>
+      <div class="dateline__line dateline__line--en">
+        {%- for c in dateline_en %}<span>{{ c }}</span>{% endfor %}
+      </div>
+    </div>
+  </header>
+  {%- else %}
+  <header class="folio-bar">
+    <span lang="ta"><span class="folio-bar__no">{{ page.number }}</span>{{ page.section }}</span>
+    <span class="folio-bar__mid" lang="ta">{{ paper.name }}</span>
+    <span class="folio-bar__right" lang="ta">{{ paper.weekday_ta }} {{ paper.date_numeric }}</span>
+  </header>
+  {%- endif %}
+
+  <div class="page-grid">
+    {%- for b in page.blocks %}
+    <div class="block {{ 'block--ruled' if b.ruled else '' }}"
+         style="grid-column: {{ b.grid_col }} / span {{ b.col }}; grid-row: {{ b.grid_row }} / span {{ b.row }};">
+
+      {%- if b.type == 'story' %}
+      <article class="story story--{{ b.variant | default('minor') }}{% if b.rule %} story--{{ b.rule }}{% endif %}{% if b.editorial %} editorial{% endif %}"
+               data-fit data-fit-id="{{ b.id }}"{% if b.jump %} data-fit-jump="{{ b.jump }}"{% endif %}>
+        <div class="story__rule"></div>
+        {%- if b.standfirst %}<p class="editorial__standfirst" lang="ta">{{ b.standfirst }}</p>{% endif %}
+        {%- if b.kicker %}<p class="story__kicker" lang="ta">{{ b.kicker }}</p>{% endif %}
+        <h3 class="story__headline" lang="ta">{{ b.headline }}</h3>
+        {%- if b.deck %}<p class="story__deck" lang="ta">{{ b.deck }}</p>{% endif %}
+        {%- if b.byline %}
+        <p class="story__byline" lang="ta">
+          {%- if b.byline.name %}<strong>{{ b.byline.name }}</strong>{% endif %}
+          {%- if b.byline.role %}{% if b.byline.name %} · {% endif %}{{ b.byline.role }}{% endif %}
+        </p>
+        {%- endif %}
+        {{ story_body(b) }}
+      </article>
+
+      {%- elif b.type == 'briefs' %}
+      <section class="panel {{ 'panel--plain' if b.plain else '' }}" data-fit data-fit-id="{{ b.id }}">
+        <h3 class="panel__title" lang="ta">{{ b.title }}</h3>
+        <div class="panel__body" lang="ta" data-fit-flow>
+          <ul class="brief-list" data-fit-trim>
+            {%- for it in b["items"] %}<li><h4>{{ it.headline }}</h4><p>{{ it.text }}</p></li>{% endfor %}
+          </ul>
+        </div>
+      </section>
+
+      {%- elif b.type == 'index' %}
+      <section class="panel panel--brand" data-fit data-fit-id="{{ b.id }}">
+        <h3 class="panel__title" lang="ta">{{ b.title }}</h3>
+        <div class="panel__body" lang="ta" data-fit-flow>
+          <ul class="index-list" data-fit-trim>
+            {%- for it in b["items"] %}<li><span>{{ it.label }}</span><span class="page-no">பக். {{ it.page }}</span></li>{% endfor %}
+          </ul>
+        </div>
+      </section>
+
+      {%- elif b.type == 'table' %}
+      <section class="panel" data-fit data-fit-id="{{ b.id }}">
+        <h3 class="panel__title" lang="ta">{{ b.title }}</h3>
+        <div class="panel__body" lang="ta" data-fit-flow>
+          <ul class="kv-list" data-fit-trim>
+            {%- for it in b["items"] %}<li><span class="k">{{ it.k }}</span><span class="v">{{ it.v }}</span></li>{% endfor %}
+          </ul>
+          {%- if b.note %}<p style="margin-top:1.5mm;font-size:0.88em;color:var(--ink-faint);">{{ b.note }}</p>{% endif %}
+        </div>
+      </section>
+
+      {%- elif b.type == 'quote' %}
+      <blockquote class="quote" data-fit data-fit-id="{{ b.id }}">
+        <p class="quote__text" lang="ta" data-fit-flow>“{{ b.text }}”</p>
+        <cite class="quote__source" lang="ta">{{ b.source }}</cite>
+      </blockquote>
+
+      {%- elif b.type == 'advert' %}
+      <aside class="advert" data-fit data-fit-id="{{ b.id }}">
+        <span class="advert__eyebrow" lang="ta">{{ b.eyebrow }}</span>
+        <h3 class="advert__headline" lang="ta">{{ b.headline }}</h3>
+        <p class="advert__body" lang="ta" data-fit-flow>{{ b.body }}</p>
+        {%- if b.footer %}<div class="advert__footer" lang="ta">{{ b.footer }}</div>{% endif %}
+      </aside>
+
+      {%- elif b.type == 'classifieds' %}
+      <section class="panel panel--plain" data-fit data-fit-id="{{ b.id }}">
+        <h3 class="panel__title" lang="ta">{{ b.title }}</h3>
+        <div class="panel__body" lang="ta" data-fit-flow>
+          <div class="classifieds" data-fit-trim>
+            {%- for ad in b.ads %}<div class="ad"><h5>{{ ad.title }}</h5><p>{{ ad.text }}</p></div>{% endfor %}
+          </div>
+        </div>
+      </section>
+
+      {%- elif b.type == 'weather' %}
+      <section class="wx" data-fit data-fit-id="{{ b.id }}">
+        <div class="story__rule"></div>
+        <header class="wx__head">
+          <h3 class="wx__title" lang="ta">{{ b.title }}</h3>
+          {%- if b.subtitle %}<p class="wx__subtitle" lang="ta">{{ b.subtitle }}</p>{% endif %}
+        </header>
+        {%- if b.summary %}<p class="wx__summary" lang="ta">{{ b.summary }}</p>{% endif %}
+        <div class="wx__main">
+          <div class="wx__col wx__col--left">
+            <h4 class="wx__subhead" lang="ta">மழை முன்னெச்சரிக்கை</h4>
+            <ul class="wx__legend">
+              {%- for c in b.categories %}
+              <li class="wx__cat">
+                <span class="wx__swatch" style="background: {{ c.color }};"></span>
+                <div>
+                  <h4 lang="ta">{{ c.label }} <span class="wx__count">{{ c.count }}</span></h4>
+                  <p lang="ta">{{ c.names }}</p>
+                </div>
+              </li>
+              {%- endfor %}
+            </ul>
+          </div>
+          <div class="wx__map" style="aspect-ratio: {{ b.map_aspect }};">{{ b.svg }}</div>
+          <div class="wx__col wx__col--right">
+            {%- if b.temperature %}
+            <div class="wx__temps">
+              <h4 class="wx__subhead" lang="ta">வெப்பநிலை நிலவரம்</h4>
+              {%- for t in b.temperature %}
+              <div class="wx__temp">
+                <span class="wx__temp-range">{{ t.range }}</span>
+                <span class="wx__temp-label" lang="ta"><strong>{{ t.label }}</strong><br>{{ t.where }}</span>
+              </div>
+              {%- endfor %}
+            </div>
+            {%- endif %}
+            {%- if b.advisories %}
+            <div class="wx__advice">
+              <h4 class="wx__subhead" lang="ta">முக்கிய அறிவுறுத்தல்கள்</h4>
+              {%- for a in b.advisories %}
+              <div class="wx__advice-item"><h5 lang="ta">{{ a.title }}</h5><p lang="ta">{{ a.text }}</p></div>
+              {%- endfor %}
+            </div>
+            {%- endif %}
+          </div>
+        </div>
+        {%- if b.note %}<p class="wx__note" lang="ta">{{ b.note }}</p>{% endif %}
+      </section>
+
+      {%- elif b.type == 'picture' %}
+      <div class="story" data-fit data-fit-id="{{ b.id }}">
+        {%- if b.rule != 'norule' %}<div class="story__rule"></div>{% endif %}
+        {{ figure(b.figure, 'figure--standalone') }}
+      </div>
+      {%- endif %}
+
+    </div>
+    {%- endfor %}
+  </div>
+
+  <footer class="footline">
+    <span lang="ta">{{ paper.name }} · {{ paper.place }}</span>
+    <span lang="ta">{{ paper.footline_note }}</span>
+    <span class="footline__page" lang="ta">பக்கம் {{ page.number }} / {{ pages | length }}</span>
+  </footer>
+
+</section>
+{%- endfor %}
+
+<script src="{{ js_href }}"></script>
+</body>
+</html>
