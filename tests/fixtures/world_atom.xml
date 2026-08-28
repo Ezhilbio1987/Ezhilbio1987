@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Sample Wire — World</title>
+  <link href="https://example.test/world"/>
+  <updated>2026-08-28T13:00:00Z</updated>
+  <entry>
+    <title>Shipping disruption continues in a key strait</title>
+    <link href="https://example.test/world/strait"/>
+    <published>2026-08-28T10:15:00Z</published>
+    <summary>Commercial vessels are being redirected as the disruption enters a second week. Fuel prices remain well above their level at the start of the year, and insurers have raised premiums on the route.</summary>
+  </entry>
+  <entry>
+    <title>Two governments propose a temporary shipping channel</title>
+    <link href="https://example.test/world/channel"/>
+    <published>2026-08-28T07:40:00Z</published>
+    <content type="html">&lt;p&gt;The proposal would establish a temporary channel and clear the route. It has not yet been accepted by all parties.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Trade body reports higher freight costs</title>
+    <link href="https://example.test/world/freight"/>
+    <updated>2026-08-28T05:00:00Z</updated>
+    <summary>Longer alternative routes and higher insurance have pushed costs up across the region.</summary>
+  </entry>
+</feed>

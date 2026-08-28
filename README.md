@@ -176,6 +176,74 @@ through a newspaper press. Available scenes: `portrait`, `dais`, `assembly`,
 `city`, `stadium`, `field`, `lab`, `crowd`, `chart`, `stage`. Give a figure a
 `src` instead and it uses your image.
 
+## Fetching the day's news
+
+`tools/fetch_news.py` reads syndication feeds and composes a draft edition
+from what they carry.
+
+```bash
+python3 tools/fetch_news.py --check-feeds        # do the feeds still work?
+python3 tools/fetch_news.py --dry-run            # what does today carry?
+python3 tools/fetch_news.py                      # write content/draft-<date>.json
+python3 build.py content/draft-2026-08-28.json --preview
+```
+
+Feeds are listed in `content/feeds.json`, each with the publication name to
+print as the credit and the section it belongs to. Tamil feeds come first, so
+their copy arrives already in the paper's language.
+
+### What it does, and what it will not do
+
+It reproduces each publisher's own headline and summary, records where every
+item came from, and lays the result out. **It writes nothing.** A test asserts
+this: every sentence in a composed block has to appear in the summary it came
+from, so the composer cannot quietly invent a detail to fill a column.
+
+That honesty has a consequence worth understanding. A syndication summary is
+two or three sentences — nowhere near a written story. So the composer sizes
+to what it actually has:
+
+- an item with the words to carry a block becomes a story;
+- everything shorter becomes a **brief**, because a two-sentence item set as a
+  story is what leaves a page of quarter-filled boxes;
+- the **page count follows the copy**, not the number of sections — five thin
+  sections make one page, not five empty ones;
+- with `--press auto` (the default) it picks the **sheet the copy fills**. A
+  wire digest of fifteen short items comes out as a full A4 page rather than a
+  third of a broadsheet.
+
+What you get is a *draft*: the layout, the sourcing and the credits are
+finished, the prose is still the feed's. Every block still carrying a
+publisher's words is marked `"draft": true`. Rewrite them before you publish —
+that is the part the machine should not do for you.
+
+### Options
+
+```
+--date 2026-08-28     the day to build (default: today, IST)
+--window 14           also keep the previous evening's copy
+--language ta         only feeds in one language
+--press a3            fix the sheet instead of choosing one
+--max-per-section 14  stop one prolific feed taking over the paper
+--offline             rebuild from the cache, no network
+--dry-run             list what was fetched and stop
+```
+
+Every feed is fetched independently: one that is down, malformed or
+rate-limited is reported by name and skipped, and the edition is built from
+the rest.
+
+## Tests
+
+```bash
+python3 tests/test_pipeline.py
+```
+
+39 tests, no network needed. Fixtures under `tests/fixtures/` stand in for
+live feeds — RSS and Atom, Tamil and English, plus one deliberately malformed
+file — and are read through the fetcher's own offline cache, so everything
+from parsing to a printed PDF runs exactly as it would on a live fetch.
+
 ## Two editions in the repository
 
 | file | what it is |
@@ -268,7 +336,8 @@ in a browser and the page looks exactly as it prints.
 ## Layout of the repository
 
 ```
-build.py                  CLI
+build.py                  CLI — edition file to PDF
+tools/fetch_news.py       CLI — feeds to draft edition
 src/tamilpaper/
   content.py              loads and validates an edition, normalises it
   layout.py               places blocks on the page grid
@@ -277,12 +346,16 @@ src/tamilpaper/
   artwork.py              SVG stand-in press pictures
   render.py               HTML from the template
   pdf.py                  Chromium print-to-PDF
+  news.py                 RSS/Atom fetching, parsing, de-duplication
+  compose.py              stories to a laid-out edition
 templates/edition.html.j2
 assets/css/               newspaper.css, fonts.css
 assets/js/fit.js          copy fitting
 assets/fonts/             Noto Serif/Sans Tamil, variable
 assets/maps/tamilnadu.json
 tools/build_map.py        regenerate the map from boundary data
+content/feeds.json        the feeds to read
+tests/                    the pipeline test suite and its fixtures
 content/edition.json      the morning broadsheet (fictional content)
 content/evening-edition.json  the evening tabloid (real news, in colour)
 output/*.pdf              both editions, printed

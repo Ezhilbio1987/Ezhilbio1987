@@ -50,7 +50,7 @@ DEFAULTS: dict[str, dict] = {
     "classifieds": {},
     "picture": {"rule": ""},
     "weather": {"map": "tamilnadu", "labels": True, "hide_labels": []},
-    "sources": {"note": ""},
+    "sources": {"note": "", "columns": 2},
 }
 
 FIGURE_DEFAULTS = {"svg": "", "src": "", "alt": "", "caption": "", "credit": "",

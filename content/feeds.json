@@ -1,0 +1,56 @@
+{
+  "_comment": [
+    "Feeds the fetcher reads. Tamil-language feeds come first: their copy",
+    "arrives already in the paper's language, so the draft needs editing",
+    "rather than translating. 'name' is printed as the credit under each",
+    "story, so use the publication's own name. 'section' decides which page",
+    "the story lands on and must match a section in the fetch command.",
+    "",
+    "Verify each URL before relying on it — publishers move and retire feeds.",
+    "Run: python3 tools/fetch_news.py --check-feeds"
+  ],
+
+  "sections": ["தமிழ்நாடு", "இந்தியா", "உலகம்", "வணிகம்", "விளையாட்டு"],
+
+  "accents": {
+    "தமிழ்நாடு": "#c0141f",
+    "இந்தியா": "#0f766e",
+    "உலகம்": "#6d28d9",
+    "வணிகம்": "#b45309",
+    "விளையாட்டு": "#1d4ed8"
+  },
+
+  "feeds": [
+    { "name": "தி இந்து தமிழ்",   "language": "ta", "section": "தமிழ்நாடு",
+      "url": "https://tamil.thehindu.com/tamilnadu/feeder/default.rss" },
+    { "name": "தி இந்து தமிழ்",   "language": "ta", "section": "இந்தியா",
+      "url": "https://tamil.thehindu.com/india/feeder/default.rss" },
+    { "name": "தி இந்து தமிழ்",   "language": "ta", "section": "உலகம்",
+      "url": "https://tamil.thehindu.com/world/feeder/default.rss" },
+    { "name": "தி இந்து தமிழ்",   "language": "ta", "section": "வணிகம்",
+      "url": "https://tamil.thehindu.com/business/feeder/default.rss" },
+    { "name": "தி இந்து தமிழ்",   "language": "ta", "section": "விளையாட்டு",
+      "url": "https://tamil.thehindu.com/sports/feeder/default.rss" },
+
+    { "name": "BBC தமிழ்",        "language": "ta", "section": "இந்தியா",
+      "url": "https://feeds.bbci.co.uk/tamil/rss.xml" },
+
+    { "name": "The Hindu",        "language": "en", "section": "தமிழ்நாடு",
+      "url": "https://www.thehindu.com/news/national/tamil-nadu/feeder/default.rss" },
+    { "name": "The Hindu",        "language": "en", "section": "இந்தியா",
+      "url": "https://www.thehindu.com/news/national/feeder/default.rss" },
+    { "name": "The Hindu",        "language": "en", "section": "வணிகம்",
+      "url": "https://www.thehindu.com/business/feeder/default.rss" },
+
+    { "name": "The New Indian Express", "language": "en", "section": "தமிழ்நாடு",
+      "url": "https://www.newindianexpress.com/states/tamil-nadu/rss" },
+
+    { "name": "BBC News",         "language": "en", "section": "உலகம்",
+      "url": "https://feeds.bbci.co.uk/news/world/rss.xml" },
+    { "name": "Al Jazeera",       "language": "en", "section": "உலகம்",
+      "url": "https://www.aljazeera.com/xml/rss/all.xml" },
+
+    { "name": "ESPNcricinfo",     "language": "en", "section": "விளையாட்டு",
+      "url": "https://www.espncricinfo.com/rss/content/story/feeds/0.xml" }
+  ]
+}

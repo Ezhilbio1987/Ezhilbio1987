@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Sample Tamil Daily — தமிழ்நாடு</title>
+    <link>https://example.test/tamilnadu</link>
+    <description>Fixture feed. Not a real publication.</description>
+    <item>
+      <title>தூய்மைப் பணியாளர்களுக்கு 2,500 நிரந்தர வீடுகள் கட்டித் தரப்படும்</title>
+      <link>https://example.test/tamilnadu/agam-housing-scheme</link>
+      <description>&lt;p&gt;போதிய வீட்டுவசதி இல்லாத தூய்மைப் பணியாளர்களுக்கு 2,500 நிரந்தரக் கான்கிரீட் வீடுகள் கட்டித் தரும் திட்டம் அறிவிக்கப்பட்டுள்ளது. நகர்ப்புறங்களிலும் ஊரகப் பகுதிகளிலும் துப்புரவுப் பணியில் ஈடுபட்டுள்ளவர்கள் பயனடைவார்கள். பயனாளிகளைத் தேர்வு செய்யும் பணி உள்ளாட்சி அமைப்புகள் மூலம் நடத்தப்படும்.&lt;/p&gt;</description>
+      <pubDate>Fri, 28 Aug 2026 11:20:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>வார இறுதியில் 4,090 சிறப்புப் பேருந்துகள் இயக்கம்</title>
+      <link>https://example.test/tamilnadu/special-buses</link>
+      <description>பயணிகள் கூட்டம் அதிகரிக்கும் என எதிர்பார்க்கப்படுவதால் மாநிலம் முழுவதும் சிறப்புப் பேருந்துகள் இயக்கப்படுகின்றன. முக்கியப் பேருந்து முனையங்களிலிருந்து புறப்படும்.</description>
+      <pubDate>Fri, 28 Aug 2026 09:05:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>சென்னை மெட்ரோ ரயில் நிறுவனத்துக்குப் புதிய நிர்வாக இயக்குநர்</title>
+      <link>https://example.test/tamilnadu/metro-md?utm_source=rss</link>
+      <description>மூத்த அதிகாரி ஒருவர் நிர்வாக இயக்குநராக நியமிக்கப்பட்டுள்ளார். இரண்டாம் கட்டப் பணிகள் நடைபெற்று வரும் நிலையில் இந்த மாற்றம் நிகழ்ந்துள்ளது.</description>
+      <pubDate>Fri, 28 Aug 2026 14:40:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>நாளை 100 பகுதிகளில் ஐந்து மணி நேர மின்தடை</title>
+      <link>https://example.test/tamilnadu/power-cut</link>
+      <description>பராமரிப்புப் பணிகள் காரணமாக காலை 9 மணி முதல் பிற்பகல் 2 மணி வரை மின் விநியோகம் நிறுத்தப்படும்.</description>
+      <pubDate>Fri, 28 Aug 2026 16:10:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>ஏரி ஆக்கிரமிப்பு அகற்றும் பணி தொடக்கம்</title>
+      <link>https://example.test/tamilnadu/lake-encroachment</link>
+      <description>மாவட்டத்தில் உள்ள நீர்நிலைகளில் ஆய்வு நடத்தப்பட்டு ஆக்கிரமிப்புகள் அகற்றப்பட்டு வருகின்றன.</description>
+      <pubDate>Fri, 28 Aug 2026 08:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>கடந்த வாரம் நடந்த நிகழ்வு — இது வடிகட்டப்பட வேண்டும்</title>
+      <link>https://example.test/tamilnadu/old-story</link>
+      <description>இது பழைய செய்தி. தேதி வடிகட்டலில் நீக்கப்பட வேண்டும்.</description>
+      <pubDate>Mon, 17 Aug 2026 10:00:00 +0530</pubDate>
+    </item>
+  </channel>
+</rss>

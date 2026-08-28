@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Sample Business Wire</title>
+    <link>https://example.test/business</link>
+    <description>Fixture feed.</description>
+    <item>
+      <title>Gold falls by Rs 600 a sovereign</title>
+      <link>https://example.test/business/gold</link>
+      <description>The metal eased in the local market, though it remains sharply higher than a year ago. Silver also slipped.</description>
+      <pubDate>Fri, 28 Aug 2026 17:05:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>Exports rise in the first quarter</title>
+      <link>https://example.test/business/exports</link>
+      <description>Textiles and leather goods led the increase, an exporters' association said. Shipping costs remain a concern for smaller firms.</description>
+      <pubDate>Fri, 28 Aug 2026 15:20:00 +0530</pubDate>
+    </item>
+  </channel>
+</rss>

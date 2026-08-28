@@ -158,9 +158,14 @@ html, body {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 4mm;
+  flex-wrap: wrap;
+  gap: 1mm 4mm;
   margin-top: 1.4mm;
 }
+/* On a narrow sheet the row wraps; it must break between the name and the
+   tagline, never through the middle of the name itself. */
+.nameplate__latin,
+.nameplate__tag { white-space: nowrap; }
 .nameplate__latin {
   font-family: var(--serif);
   font-weight: 700;
@@ -862,10 +867,11 @@ html, body {
   margin: 0;
   padding-left: 4.4mm;
   font-size: 0.94em;
-  columns: 2;
   column-gap: var(--gutter);
   column-rule: var(--rule-hair) solid var(--rule-ink);
 }
+.sources__list[data-columns="2"] { columns: 2; }
+.sources__list[data-columns="3"] { columns: 3; }
 .sources__list li { break-inside: avoid; }
 .sources__list li {
   padding: 0.9mm 0;

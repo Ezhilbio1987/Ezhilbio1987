@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Sample Sport Wire</title>
+    <link>https://example.test/sport</link>
+    <description>Fixture feed.</description>
+    <item>
+      <title>Second Test ends in a draw after a defiant century</title>
+      <link>https://example.test/sport/test-draw</link>
+      <description>An unbeaten 133 saved the match after the follow-on looked likely. The series remains level.</description>
+      <pubDate>Thu, 27 Aug 2026 18:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>State side reaches the final of the regional tournament</title>
+      <link>https://example.test/sport/kabaddi</link>
+      <description>The semi-final was won 38-29.</description>
+      <pubDate>Fri, 28 Aug 2026 16:30:00 +0530</pubDate>
+    </item>
+  </channel>
+</rss>

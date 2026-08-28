@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Sample Tamil Daily — இந்தியா</title>
+    <link>https://example.test/india</link>
+    <description>Fixture feed.</description>
+    <item>
+      <title>சென்னை மெட்ரோ ரயில் நிறுவனத்துக்குப் புதிய நிர்வாக இயக்குநர்</title>
+      <link>https://example.test/tamilnadu/metro-md</link>
+      <description>Duplicate of the Tamil Nadu item, reaching a second desk with a different tracking suffix.</description>
+      <pubDate>Fri, 28 Aug 2026 14:45:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>நாடு முழுவதும் புதிய திறன் பயிற்சித் திட்டம் அறிவிப்பு</title>
+      <link>https://example.test/india/skills</link>
+      <description>இளைஞர்களுக்கான திறன் பயிற்சித் திட்டம் ஒன்று அறிவிக்கப்பட்டுள்ளது. ஓராண்டுக்குள் பயிற்சி வழங்கப்படும் என்று தெரிவிக்கப்பட்டது.</description>
+      <pubDate>Fri, 28 Aug 2026 12:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>பருவமழை முன்னறிவிப்பு: சில மாநிலங்களில் கனமழைக்கு வாய்ப்பு</title>
+      <link>https://example.test/india/monsoon</link>
+      <description>அடுத்த மூன்று நாட்களுக்குச் சில மாநிலங்களில் கனமழை பெய்ய வாய்ப்புள்ளதாக வானிலை மையம் தெரிவித்துள்ளது.</description>
+      <pubDate>Fri, 28 Aug 2026 13:30:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>தேதி இல்லாத செய்தி — இது வைக்கப்பட வேண்டும்</title>
+      <link>https://example.test/india/undated</link>
+      <description>சில ஊட்டங்கள் தேதியைத் தருவதில்லை. அவற்றை இழக்கக் கூடாது.</description>
+    </item>
+  </channel>
+</rss>

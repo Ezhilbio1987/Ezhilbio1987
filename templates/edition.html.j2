@@ -220,7 +220,7 @@
       <section class="panel panel--plain sources" data-fit data-fit-id="{{ b.id }}">
         <h3 class="panel__title" lang="ta">{{ b.title }}</h3>
         <div class="panel__body" lang="ta" data-fit-flow>
-          <ol class="sources__list" data-fit-trim>
+          <ol class="sources__list" data-fit-trim data-columns="{{ b.columns | default(2) }}">
             {%- for it in b["items"] %}
             <li><strong>{{ it.label }}</strong><span class="sources__url">{{ it.url }}</span></li>
             {%- endfor %}
