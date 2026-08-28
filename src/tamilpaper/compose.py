@@ -396,12 +396,16 @@ def compose(stories: list[Story], sections: list[str], cols: int, rows: int,
             edition_label: str = "மாலைப் பதிப்பு",
             accents: dict[str, str] | None = None,
             palette: str = "civic",
+            sources_box: bool = False,
             words_per_cell: int = WORDS_PER_CELL) -> dict:
     """Build a complete, valid edition from fetched stories.
 
     The page count follows the copy. Sections are kept in the order given and
-    run on together when neither fills a page on its own; the sources box goes
-    at the foot of the last page.
+    run on together when neither fills a page on its own.
+
+    ``sources_box`` adds a box of credits at the foot of the last page. It is
+    off by default: each story already carries the credit line that matters,
+    and a page of URLs is apparatus, not news.
     """
     if not stories:
         raise ComposeError("no stories to compose — check the fetch report")
@@ -420,14 +424,14 @@ def compose(stories: list[Story], sections: list[str], cols: int, rows: int,
     # The front page loses rows to the nameplate; the last loses them to the
     # sources box.
     grid = cols * rows
-    sources = sources_block(stories, cols, 2)
+    sources = sources_block(stories, cols, 2) if sources_box else None
     batches = _split_into_pages(
         by_section, order,
         page_cells=grid, first_page_cells=int(grid * 0.8),
         words_per_cell=words_per_cell)
 
-    # The sources box has to fit on the last page; if it will not, run another.
-    if page_capacity_cells(batches[-1], words_per_cell) + cols * 2 > grid:
+    # The sources box, if there is one, has to fit on the last page.
+    if sources and page_capacity_cells(batches[-1], words_per_cell) + cols * 2 > grid:
         batches.append([])
     if not batches[-1]:
         # An empty last page carries the sources box and whatever the page
@@ -445,7 +449,7 @@ def compose(stories: list[Story], sections: list[str], cols: int, rows: int,
         for story in batch:
             if story.section not in present:
                 present.append(story.section)
-        reserve = [sources] if position == len(batches) - 1 else []
+        reserve = [sources] if sources and position == len(batches) - 1 else []
         page, overflow = plan_page(
             batch, cols, rows, len(pages) + 1, " · ".join(present),
             "front" if not pages else "inner", reserve=reserve,

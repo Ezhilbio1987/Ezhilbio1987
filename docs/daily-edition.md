@@ -64,13 +64,13 @@ what makes the paper is the writing.
    `sources` block on the last page.
 3. **Print only what is corroborated.** If two sources disagree, or a search
    summary looks garbled, leave it out. A shorter paper is not a worse one.
-4. **Credit, do not declare.** The `source` line under each story and the
-   sources box on the last page are the statement. Do **not** run any of the
-   following: an "about this edition" panel, a note under the sources list, a
-   disclaimer in the footline, or a declaration in the masthead ear. The
-   credits do the work; prose repeating them only takes room from the news.
-   The footline carries the edition and date, and the right-hand ear carries
-   the day's flashes with a one-line pointer to the sources page.
+4. **Credit in the story, nowhere else.** Each story carries a one-line
+   `source` credit under its last column — the way a paper credits agency
+   copy. That is the whole of it. Do **not** run an "about this edition"
+   panel, a sources box, a note under a list, a footline disclaimer, or a
+   declaration in the masthead ear. Apparatus is not news, and the page is
+   for news. The footline carries the edition and date; the right-hand ear
+   carries the day's flashes.
 5. **No house advertisements.** Space on the page belongs to news. If a block
    has nothing to fill it, run local briefs there — Chennai civic, transport,
    water, corporation and neighbourhood items are always worth the room.

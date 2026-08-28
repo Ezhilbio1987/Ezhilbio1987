@@ -243,8 +243,17 @@ class TestCompose(unittest.TestCase):
                     self.assertIn(stripped[:40], original,
                                   f"invented copy in {block['id']}: {paragraph[:60]}")
 
-    def test_sources_box_is_present_on_the_last_page(self):
+    def test_no_sources_box_unless_asked_for(self):
+        """Apparatus is off by default: the credit under each story is the
+        attribution, and a page of URLs is not news."""
         edition = self._edition()
+        boxes = [b for p in edition["pages"] for b in p["blocks"]
+                 if b["type"] == "sources"]
+        self.assertEqual(boxes, [])
+
+    def test_sources_box_can_be_asked_for(self):
+        edition = compose.compose(self.stories, sections=SECTIONS, cols=5, rows=11,
+                                  day=DAY, preset="tabloid", sources_box=True)
         last = edition["pages"][-1]
         boxes = [b for b in last["blocks"] if b["type"] == "sources"]
         self.assertEqual(len(boxes), 1)

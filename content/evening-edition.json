@@ -914,62 +914,29 @@
           "footer": "github.com/Ezhilbio1987"
         },
         {
-          "id": "p4-sources",
-          "type": "sources",
+          "id": "p4-city",
+          "type": "briefs",
           "col": 5,
           "row": 2,
-          "title": "இந்த இதழின் செய்தி ஆதாரங்கள்",
+          "title": "நகரம் · தொடர் கவனத்தில்",
           "items": [
             {
-              "label": "News Today — ‘ஆகம்’ வீட்டுவசதித் திட்டம்",
-              "url": "newstodaynet.com/2026/08/28/tamil-nadu-to-build-2500-homes-for-sanitation-workers/"
+              "headline": "பேருந்து வழிச் சாலைகளில் ஐந்தில் ஒன்று சேதம்",
+              "text": "சென்னையில் பேருந்துகள் இயங்கும் வழிச் சாலைகளில் சுமார் 20 விழுக்காடு சேதமடைந்த நிலையில் இருப்பதாகத் தெரிவிக்கப்பட்டுள்ளது. உடனடிப் பழுதுபார்ப்புத் தேவை என்ற கோரிக்கை முன்வைக்கப்படுகிறது. — ஆகஸ்ட் 11"
             },
             {
-              "label": "News Today — 4,090 சிறப்புப் பேருந்துகள்",
-              "url": "newstodaynet.com/2026/08/28/tn-to-operate-4090-special-buses-this-weekend/"
+              "headline": "வேளச்சேரி: கால்வாயில் நீர் பின்னோக்கிச் செல்கிறது",
+              "text": "மூடப்பட்ட கால்வாய் ஒன்று சரிவரச் செயல்படாததால் நீர் பின்னோக்கிச் செல்வதாகவும், வெள்ள அபாயம் ஏற்படலாம் என்றும் அப்பகுதி மக்கள் கவலை தெரிவித்துள்ளனர். — ஆகஸ்ட் 18"
             },
             {
-              "label": "News Today — சென்னை மெட்ரோ நிர்வாக இயக்குநர்",
-              "url": "newstodaynet.com/2026/08/28/ashish-chatterjee-appointed-chennai-metro-md/"
+              "headline": "மண்டலங்களுக்கு ஏழு அமைச்சர்கள்",
+              "text": "சென்னை மாநகரின் மண்டலங்களை நெருக்கமாகக் கண்காணிக்க ஏழு அமைச்சர்கள் நியமிக்கப்பட்டுள்ளனர். சாலைகள், கழிவுநீர் வடிகால், குடிநீர், துப்புரவு ஆகியவை கவனத்தில். — ஆகஸ்ட் 27"
             },
             {
-              "label": "News Today — 12 ஆய்வாளர்கள் இடமாற்றம்",
-              "url": "newstodaynet.com/2026/08/28/chennai-police-transfers-12-inspectors/"
-            },
-            {
-              "label": "News Today — திருமாவளவன் கருத்து",
-              "url": "newstodaynet.com/2026/08/28/thiruma-seeks-constructive-debates-in-assembly/"
-            },
-            {
-              "label": "Oneindia — நாளைய மின்தடை",
-              "url": "oneindia.com/chennai/chennai-power-cut-on-august-28-8189303.html"
-            },
-            {
-              "label": "DT Next — தங்கம், வெள்ளி விலை",
-              "url": "dtnext.in/news/chennai/chennai-gold-price-falls-by-rs-600-on-august-28-2026"
-            },
-            {
-              "label": "இந்திய வானிலை ஆய்வு மையம் — நாளாந்த அறிக்கை",
-              "url": "mausam.imd.gov.in/chennai/mcdata/daily_weather_report.pdf"
-            },
-            {
-              "label": "DD India — மூன்று நாள் மழை முன்னறிவிப்பு",
-              "url": "ddindia.co.in/2026/08/heavy-rain-gusty-winds-likely-in-parts-of-tamil-nadu/"
-            },
-            {
-              "label": "Al Jazeera — ஹார்முஸ் நெருக்கடி நேரலை",
-              "url": "aljazeera.com/news/liveblog/2026/8/26/"
-            },
-            {
-              "label": "CNN — ஈரான் போர் நேரலை",
-              "url": "cnn.com/2026/08/26/world/live-news/iran-war-trump"
-            },
-            {
-              "label": "ESPNcricinfo — கொழும்பு டெஸ்ட்",
-              "url": "espncricinfo.com/team/india-6/match-schedule-fixtures-and-results"
+              "headline": "நீர் மெட்ரோ: சாத்தியக்கூறு ஆய்வு",
+              "text": "பக்கிங்காம் கால்வாய் வழியாக என்னூர் முதல் மாமல்லபுரம் வரை சுமார் 53 கி.மீ. தூரத்துக்கு நீர் மெட்ரோ சேவை குறித்த ஆய்வு தொடங்கியுள்ளது. — ஆகஸ்ட் 13"
             }
-          ],
-          "note": ""
+          ]
         }
       ]
     }
