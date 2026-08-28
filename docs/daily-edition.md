@@ -55,16 +55,34 @@ queries return almanac pages, specific ones return stories:
 Write the copy in Tamil, in newspaper register. The layout is already good;
 what makes the paper is the writing.
 
-**This is a digest, not a magazine.** The edition carries **40 to 60 items**,
-and **no story runs past 200 words**. Breadth beats depth: a reader wants to
+**This is a digest, not a magazine.** The edition runs **four pages** and
+carries **100 items or more** — 100 is the floor, not the target; if a page
+has room, fill it with another item. **No story runs past 200 words.** Breadth beats depth: a reader wants to
 know what happened across the state, the country and the world, not one story
 at length. So:
 
-- 6 to 10 items get a block of their own, at 100–200 words;
+- 8 to 12 items get a block of their own, at 100–200 words;
 - everything else runs as a **brief** — a headline and two or three sentences
   in a panel. Most of the paper is briefs, and that is correct;
 - one fact per item is often enough. Resist adding background the source did
-  not carry.
+  not carry;
+- **leave no gap deeper than two lines.** Run `tools/refit.py`, then fill what
+  it reports as slack with more items.
+
+**Cover every sector.** A page should not be one beat: politics, education,
+health, agriculture, city and civic, courts, culture, science, business,
+economy, sport and world all belong in the paper. The four pages run roughly:
+
+| page | sections |
+| --- | --- |
+| 1 | the day's lead across all beats, weather box, two briefs panels |
+| 2 | Tamil Nadu — politics, education, agriculture, civic — and the weather map |
+| 3 | business and the economy — markets, prices, indicators, policy, state schemes |
+| 4 | sport, then world |
+
+**Sport runs national first, then Tamil Nadu.** The national panel leads —
+cricket, hockey, chess, badminton, whatever the day gave — and the Tamil Nadu
+panel follows it, never the other way round. World sport comes after both.
 
 If a beat yields nothing, drop it and give the room to one that did. Search
 beat by beat — Tamil Nadu government, Chennai civic, districts, courts,

@@ -43,10 +43,14 @@ def measure(edition_path: Path) -> dict[str, float]:
             if not item.get("error")}
 
 
-def repack(page: dict, wanted: dict[str, int]) -> None:
+def repack(page: dict, wanted: dict[str, int]) -> int:
     """Lay the page's blocks out in full-width bands at their wanted sizes.
 
     Order is preserved — the editor decided it — and only the shape changes.
+    Returns the number of rows the page had to be padded by: the grid must be
+    covered exactly, so when the copy does not reach the foot of the page
+    something has to stretch. That number is the honest measure of how much
+    news the page is short of, and the caller reports it.
     """
     cols, rows = page["cols"], page["rows"]
     blocks = page["blocks"]
@@ -79,13 +83,16 @@ def repack(page: dict, wanted: dict[str, int]) -> None:
         if heights[i] <= MIN_ROWS:
             break
         heights[i] -= 1
+    slack = 0
     while sum(heights) < rows:
         i = heights.index(min(heights))
         heights[i] += 1
+        slack += 1
 
     for band, height in zip(bands, heights):
         for block in band:
             block["row"] = height
+    return slack
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -105,6 +112,7 @@ def main(argv: list[str] | None = None) -> int:
             scratch = path if not args.dry_run else path
         fills = measure(path)
         moved = 0
+        short: list[tuple[int, int]] = []
         for page in data["pages"]:
             wanted = {}
             for block in page["blocks"]:
@@ -116,11 +124,17 @@ def main(argv: list[str] | None = None) -> int:
                 wanted[block["id"]] = max(block["col"] * MIN_ROWS,
                                           math.ceil(cells * fill / TARGET_FILL))
             before = [(b["id"], b["row"]) for b in page["blocks"]]
-            repack(page, wanted)
+            slack = repack(page, wanted)
             moved += sum(1 for (i, r), b in zip(before, page["blocks"]) if r != b["row"])
+            if slack:
+                short.append((page["number"], slack))
         path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n",
                         encoding="utf-8")
         print(f"pass {round_no}: resized {moved} block(s)")
+        for number, slack in short:
+            # A tabloid row holds roughly three brief items across the page.
+            print(f"  page {number}: {slack} row(s) of slack — room for about "
+                  f"{slack * 3} more items")
         if not moved:
             break
 
