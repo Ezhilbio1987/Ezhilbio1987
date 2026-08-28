@@ -193,5 +193,47 @@ def load(path: str | Path) -> dict:
                 f"{cols}×{rows} grid — the page will have a white hole"
             )
 
+    warnings.extend(_duplicate_headlines(data))
     data["warnings"] = warnings
     return data
+
+
+def _duplicate_headlines(data: dict) -> list[str]:
+    """Catch the same story running twice in one edition.
+
+    An edition assembled from several panels will repeat itself if nobody is
+    watching — the same item in a page's briefs and in the front-page summary.
+    Comparison is on the folded headline, so punctuation and spacing do not
+    hide a duplicate.
+    """
+    import re
+    import unicodedata
+
+    def fold(text: str) -> str:
+        text = unicodedata.normalize("NFKC", text.casefold())
+        text = "".join(" " if unicodedata.category(c)[0] in "PSZC" else c
+                       for c in text)
+        return re.sub(r"\s+", " ", text).strip()
+
+    seen: dict[str, str] = {}
+    found: list[str] = []
+    for page in data["pages"]:
+        for block in page["blocks"]:
+            headlines = []
+            if block["type"] == "story":
+                headlines.append(block.get("headline", ""))
+            for item in block.get("items", []) or []:
+                if isinstance(item, dict) and item.get("headline"):
+                    headlines.append(item["headline"])
+            for headline in headlines:
+                key = fold(headline)
+                if not key:
+                    continue
+                where = f"page {page['number']}/{block['id']}"
+                if key in seen:
+                    found.append(
+                        f"the same item runs twice — {seen[key]} and {where}: "
+                        f"{headline[:56]}")
+                else:
+                    seen[key] = where
+    return found

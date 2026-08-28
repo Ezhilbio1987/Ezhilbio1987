@@ -55,6 +55,24 @@ queries return almanac pages, specific ones return stories:
 Write the copy in Tamil, in newspaper register. The layout is already good;
 what makes the paper is the writing.
 
+**This is a digest, not a magazine.** The edition carries **40 to 60 items**,
+and **no story runs past 200 words**. Breadth beats depth: a reader wants to
+know what happened across the state, the country and the world, not one story
+at length. So:
+
+- 6 to 10 items get a block of their own, at 100–200 words;
+- everything else runs as a **brief** — a headline and two or three sentences
+  in a panel. Most of the paper is briefs, and that is correct;
+- one fact per item is often enough. Resist adding background the source did
+  not carry.
+
+If a beat yields nothing, drop it and give the room to one that did. Search
+beat by beat — Tamil Nadu government, Chennai civic, districts, courts,
+education, health, agriculture, transport, weather, prices, business,
+national, world, Tamil Nadu sport, national and international sport, cinema —
+because one broad query returns almanac pages while narrow ones return
+stories.
+
 **The rules, in order of importance:**
 
 1. **Never invent a fact.** Not a number, not a name, not a quote, not a
@@ -81,7 +99,14 @@ what makes the paper is the writing.
 
 ```bash
 python3 build.py content/daily.json -o output/daily/$(date +%F).pdf
+python3 tools/refit.py content/daily.json      # resize blocks to the copy
+python3 build.py content/daily.json -o output/daily/$(date +%F).pdf
 ```
+
+`refit.py` closes the loop: it reads how full each block came out and resizes
+every block to what its copy actually needs, re-packing each page so the grid
+is still covered exactly. Run it, then build again. It never edits copy — if
+a page still has room to spare, the answer is another item, not bigger type.
 
 Read the copy-fitting report. It is the make-up editor's eye:
 
@@ -89,11 +114,17 @@ Read the copy-fitting report. It is the make-up editor's eye:
   block another row;
 - a block **filling under 88%** will leave a hole — lengthen it, shrink it,
   or move it;
-- fix these before publishing. Both are one number in the edition file.
+- **the same item running twice** is reported by headline — an edition
+  assembled from several panels repeats itself if nobody is watching. The
+  check only catches identical headlines, so read the panels yourself for the
+  same story told twice under different words;
+- fix these before publishing.
 
-**Size the sheet to the copy, never the copy to the sheet.** With a normal
-day's material `tabloid` is right. With very little, drop to `a3` or `a4`.
-Padding a broadsheet with invented sentences is the one failure mode this
+**Size the paper to the copy, never the copy to the paper.** Count the cells
+the copy needs against the cells the pages have — a tabloid page is 55. Sixty
+short items came to about 165 cells, which is three pages, not four. Run
+fewer pages rather than four slack ones, and drop to `a3` or `a4` on a thin
+day. Padding a page with invented sentences is the one failure mode this
 whole pipeline exists to prevent.
 
 ## 4. Publish
