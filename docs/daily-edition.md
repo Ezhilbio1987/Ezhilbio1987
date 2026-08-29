@@ -55,8 +55,8 @@ queries return almanac pages, specific ones return stories:
 Write the copy in Tamil, in newspaper register. The layout is already good;
 what makes the paper is the writing.
 
-**This is a digest, not a magazine.** The edition runs **four pages** and
-carries **100 items or more** — 100 is the floor, not the target; if a page
+**This is a digest, not a magazine.** The edition runs **five pages** and
+carries **140 items or more** — that is the floor, not the target; if a page
 has room, fill it with another item. **No story runs past 200 words.** Breadth beats depth: a reader wants to
 know what happened across the state, the country and the world, not one story
 at length. So:
@@ -69,16 +69,44 @@ at length. So:
 - **leave no gap deeper than two lines.** Run `tools/refit.py`, then fill what
   it reports as slack with more items.
 
+**The five zones that must appear every day.** Whatever else the day gives,
+the paper leads on these and gives each of them room:
+
+1. **The top political event** — the assembly, the courts, the parties, the
+   Union–state relationship. This is page one's lead unless something bigger
+   displaces it.
+2. **Government scheme announcements, state and central.** Both, every day.
+   A central announcement is usually an instruction to the states, so
+   **always carry what it means for Tamil Nadu** — a subsidy against the
+   delta's samba season, a GST cut against Tiruppur knitwear, a tariff change
+   against the state's exporters. The instruction alone is only half the item.
+3. **Public protest and demand** — strikes, hunger strikes, walkouts,
+   deputations, village agitations. These are the stories other papers bury
+   inside; run them with names, places and dates.
+4. **Employment calls** — TNPSC, TRB, railway, SSC, banking and state
+   recruitment notifications, with the closing date and the eligibility line.
+   A reader should be able to act on the item.
+5. **Appreciation, success and the event of the day** — awards, titles won,
+   a school that opened, the day's observance. End the reader's page on
+   something that happened well.
+
 **Cover every sector.** A page should not be one beat: politics, education,
 health, agriculture, city and civic, courts, culture, science, business,
-economy, sport and world all belong in the paper. The four pages run roughly:
+economy, sport and world all belong in the paper. The five pages run roughly:
 
 | page | sections |
 | --- | --- |
-| 1 | the day's lead across all beats, weather box, two briefs panels |
-| 2 | Tamil Nadu — politics, education, agriculture, civic — and the weather map |
-| 3 | business and the economy — markets, prices, indicators, policy, state schemes |
-| 4 | sport, then world |
+| 1 | the day's political lead, the second lead, weather box, two briefs panels |
+| 2 | government schemes — state, then central with its Tamil Nadu impact — plus city and districts |
+| 3 | appreciation and success, public protest, the weather map, the panchangam |
+| 4 | sport: national first, then Tamil Nadu, then world |
+| 5 | economy, employment calls, education, science, world |
+
+**Run the panchangam every day.** A `table` block on page 3 carrying the
+year, month and day, tithi, natchathiram, yogam, karanam, sunrise and sunset,
+the auspicious hours, Rahu kalam, Emakandam, Kuligai, Chandrashtamam, soolam
+and the day's observance. Source it and date it like any other item — it is
+the page readers turn to first, so a wrong Aavani date is a real error.
 
 **Sport runs national first, then Tamil Nadu.** The national panel leads —
 cricket, hockey, chess, badminton, whatever the day gave — and the Tamil Nadu
@@ -107,10 +135,23 @@ stories.
    declaration in the masthead ear. Apparatus is not news, and the page is
    for news. The footline carries the edition and date; the right-hand ear
    carries the day's flashes.
-5. **No house advertisements.** Space on the page belongs to news. If a block
+5. **Use a real photograph wherever one exists.** A genuine picture is what
+   makes the page trustworthy, so a drawn stand-in is the fallback, never the
+   default. Put the file in `assets/photos/` and name it in the figure as
+   `"src": "assets/photos/<date>-<subject>.jpg"`; the builder inlines it as a
+   data URI so the PDF carries it. Credit it `"படம்: <source>"`.
+   - **Never lift an advertisement or a designed poster** out of a source and
+     run it as a news picture. If a campaign graphic has a real photograph
+     inset in it, crop the photograph out and use only that.
+   - A drawn stand-in is credited `விளக்கப் படம்` and never
+     `கோப்புப் படம்` or `நிருபர் படம்` — it is not a photograph and must not
+     read as one.
+   - A photo story needs **three columns**. A picture spanning a two-column
+     block breaks the make-up and the fitter will silently drop paragraphs.
+6. **No house advertisements.** Space on the page belongs to news. If a block
    has nothing to fill it, run local briefs there — Chennai civic, transport,
    water, corporation and neighbourhood items are always worth the room.
-6. **Do not translate a claim into a stronger one.** "may rise" is not
+7. **Do not translate a claim into a stronger one.** "may rise" is not
    "will rise"; "sources said" is not "the government announced".
 
 ## 3. Build

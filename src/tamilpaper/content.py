@@ -6,11 +6,14 @@ template renders: story copy becomes a flow of typed items, pictures get their
 artwork resolved, and every block is validated before make-up starts.
 """
 
+import base64
 import json
 from pathlib import Path
 
 from . import artwork, press, weather
 from .layout import place_blocks, coverage
+
+ROOT = Path(__file__).resolve().parents[2]
 
 BLOCK_TYPES = {"story", "briefs", "index", "table", "quote", "advert", "classifieds",
                "picture", "weather", "sources"}
@@ -65,12 +68,40 @@ def _apply_defaults(block: dict) -> None:
         block["byline"].setdefault("role", "")
 
 
+PHOTO_TYPES = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
+               ".webp": "image/webp", ".gif": "image/gif"}
+
+
+def _inline_photo(src: str) -> str:
+    """Read a photograph off disk and return it as a ``data:`` URI.
+
+    A real picture beats a drawn stand-in, so the edition can name a file in
+    ``assets/photos``. It has to be inlined rather than linked: the page is
+    printed by a browser from a temporary directory, and a relative link that
+    resolves while the HTML sits next to the assets does not survive being
+    moved. Inlining also means one PDF carries everything it needs.
+    """
+    path = Path(src)
+    if not path.is_absolute():
+        path = ROOT / src
+    if not path.is_file():
+        raise ContentError(f"picture not found: {src}")
+    mime = PHOTO_TYPES.get(path.suffix.lower())
+    if mime is None:
+        raise ContentError(f"unsupported picture type: {path.suffix} ({src})")
+    encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+    return f"data:{mime};base64,{encoded}"
+
+
 def _resolve_figure(fig: dict, seed: str, palette: str | None = None) -> dict:
-    """Turn ``scene`` into inline SVG artwork; leave a real ``src`` alone."""
+    """Inline a real photograph, or draw a stand-in from ``scene``."""
     fig = dict(fig)
     for key, value in FIGURE_DEFAULTS.items():
         fig.setdefault(key, value)
-    if fig.get("scene") and not fig.get("src"):
+    src = fig.get("src")
+    if src and not src.startswith(("data:", "http://", "https://")):
+        fig["src"] = _inline_photo(src)
+    elif fig.get("scene") and not src:
         try:
             fig["svg"] = artwork.render(fig["scene"], fig.get("seed", seed),
                                         fig.get("palette") or palette)
