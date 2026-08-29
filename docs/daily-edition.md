@@ -245,9 +245,25 @@ for i, p in enumerate(d):
 
 ## 5. When the news will not come
 
-If neither the feeds nor search yield enough for a page, **do not fabricate an
-edition**. Send a short message saying what was unavailable and why. A missed
-morning is recoverable; a paper of invented news is not.
+Two rules, and they do not conflict — hold both.
+
+**Never fabricate.** Not a number, a name, a quote or a date. A paper of
+invented news is not recoverable.
+
+**Always deliver something.** A thin day means a *shorter paper*, not no
+paper. Drop to four pages, or three; run the sections that have copy and cut
+the ones that do not; say plainly at the end what was thin. Sizing the paper
+to the copy is the normal response to a quiet day — it is what section 2 asks
+for — and it is not a failure worth withholding the edition over.
+
+The failure mode this replaces is real: on 29 August the 6 am routine ran for
+thirty-three minutes, reported success, and delivered nothing at all. Reading
+"do not fabricate" as "send nothing" is the wrong reading. The reader wanted a
+paper and got silence, which is worse than a three-page paper would have been.
+
+Send nothing only if the build itself is broken or every source is
+unreachable — and then say so explicitly, in a message to the reader. Finishing
+quietly is never an outcome.
 
 ---
 
