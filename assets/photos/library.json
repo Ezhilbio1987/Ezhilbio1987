@@ -1,0 +1,55 @@
+{
+  "_note": "Standing file pictures, keyed by subject. A figure says {\"subject\": \"sattamandram\"} and the builder uses the photograph if one is filed here, otherwise it draws the fallback scene. Add a photograph by dropping the file in assets/photos/library/ and naming it here.",
+  "subjects": {
+    "sattamandram": {
+      "file": "assets/photos/library/sattamandram.jpg",
+      "credit": "கோப்புப் படம்: தமிழ் திசை",
+      "scene": "chamber",
+      "alt": "தமிழ்நாடு சட்டப்பேரவை அவை"
+    },
+    "assembly": {
+      "scene": "chamber",
+      "alt": "சட்டப்பேரவை அவை"
+    },
+    "secretariat": {
+      "scene": "secretariat",
+      "alt": "தலைமைச் செயலகம்"
+    },
+    "scheme": {
+      "scene": "secretariat",
+      "alt": "அரசுத் திட்ட அறிவிப்பு"
+    },
+    "cricket": {
+      "scene": "stadium",
+      "alt": "கிரிக்கெட் மைதானம்"
+    },
+    "stadium": {
+      "scene": "stadium",
+      "alt": "விளையாட்டு மைதானம்"
+    },
+    "protest": {
+      "scene": "crowd",
+      "alt": "போராட்டம்"
+    },
+    "farm": {
+      "scene": "field",
+      "alt": "வேளாண் நிலம்"
+    },
+    "city": {
+      "scene": "city",
+      "alt": "நகரக் காட்சி"
+    },
+    "market": {
+      "scene": "chart",
+      "alt": "பங்குச் சந்தை"
+    },
+    "science": {
+      "scene": "lab",
+      "alt": "ஆய்வகம்"
+    },
+    "hockey": {
+      "scene": "hockey",
+      "alt": "ஹாக்கி மைதானம்"
+    }
+  }
+}

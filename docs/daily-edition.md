@@ -135,7 +135,31 @@ stories.
    declaration in the masthead ear. Apparatus is not news, and the page is
    for news. The footline carries the edition and date; the right-hand ear
    carries the day's flashes.
-5. **Use a real photograph wherever one exists.** A genuine picture is what
+5. **Ask for a subject, not a picture.** A figure says
+   `{"subject": "sattamandram"}` and the builder decides: the filed
+   photograph if `assets/photos/library.json` has one for that subject,
+   otherwise the scene drawn for it. File a photograph later and every story
+   that asks for the subject upgrades, with no edition to edit.
+
+   Subjects filed today: `sattamandram` (a real chamber photograph),
+   `assembly`, `secretariat`, `scheme`, `cricket`, `hockey`, `stadium`,
+   `protest`, `farm`, `city`, `market`, `science`.
+
+   **Match the subject to the actual event.** A hockey report does not get
+   the cricket ground — stumps and a pitch strip in a hockey picture is the
+   wrong picture, not a stylistic choice. Add a scene rather than reuse a
+   near-miss.
+
+   To file a photograph: put it in `assets/photos/library/<subject>.jpg`,
+   add `file` and `credit` to that subject in `library.json`. A reused
+   photograph is credited `கோப்புப் படம்: <source>`; a one-off from today's
+   reporting is `படம்: <source>`. Only a drawing is `விளக்கப் படம்`.
+
+   Note that no image host is reachable from the build environment — every
+   one answers 403 at the proxy — so photographs arrive only as files, and
+   the library is how they earn their keep across editions.
+
+6. **Use a real photograph wherever one exists.** A genuine picture is what
    makes the page trustworthy, so a drawn stand-in is the fallback, never the
    default. Put the file in `assets/photos/` and name it in the figure as
    `"src": "assets/photos/<date>-<subject>.jpg"`; the builder inlines it as a
@@ -148,10 +172,10 @@ stories.
      read as one.
    - A photo story needs **three columns**. A picture spanning a two-column
      block breaks the make-up and the fitter will silently drop paragraphs.
-6. **No house advertisements.** Space on the page belongs to news. If a block
+7. **No house advertisements.** Space on the page belongs to news. If a block
    has nothing to fill it, run local briefs there — Chennai civic, transport,
    water, corporation and neighbourhood items are always worth the room.
-7. **Do not translate a claim into a stronger one.** "may rise" is not
+8. **Do not translate a claim into a stronger one.** "may rise" is not
    "will rise"; "sources said" is not "the government announced".
 
 ## 3. Build

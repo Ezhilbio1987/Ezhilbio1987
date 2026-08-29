@@ -28,6 +28,7 @@ PALETTES["civic"][1] = "#1f3a68"
 # The palette each scene reaches for when the edition does not name one.
 SCENE_PALETTE = {
     "portrait": "civic", "dais": "civic", "assembly": "civic", "crowd": "civic",
+    "chamber": "civic", "secretariat": "civic", "hockey": "sea",
     "city": "dusk", "stadium": "field", "field": "field", "lab": "sea",
     "chart": "civic", "stage": "rose",
 }
@@ -183,20 +184,195 @@ def _city(r: _Rand, uid: str) -> str:
 
 
 def _stadium(r: _Rand, uid: str) -> str:
+    """A cricket ground under lights — floodlights, stands, boundary, pitch."""
+    cx = W / 2
     body = [f'<rect width="{W}" height="{H}" fill="url(#sky{uid})"/>']
-    for x in (36, W - 36):
-        body.append(f'<rect x="{x - 1.5:.0f}" y="14" width="3" height="62" fill="{TONE[1]}"/>')
-        body.append(f'<rect x="{x - 17:.0f}" y="8" width="34" height="16" rx="2" fill="{TONE[0]}"/>')
-    body.append(f'<path d="M0 92 Q{W / 2:.0f} 58 {W} 92 L{W} 128 Q{W / 2:.0f} 96 0 128 Z" fill="{TONE[2]}"/>')
-    for i in range(46):
-        x = r.between(4, W - 4)
-        y = r.between(70, 122)
-        body.append(f'<circle cx="{x:.0f}" cy="{y:.0f}" r="{r.between(1.4, 2.8):.1f}" fill="{TONE[r.pick([0, 4, 5])]}" opacity="0.85"/>')
-    body.append(f'<path d="M0 128 Q{W / 2:.0f} 96 {W} 128 L{W} {H} L0 {H} Z" fill="{TONE[3]}"/>')
-    body.append(f'<path d="M0 150 Q{W / 2:.0f} 128 {W} 150" stroke="{TONE[6]}" stroke-width="1.6" fill="none" opacity="0.8"/>')
-    body.append(f'<circle cx="{W / 2:.0f}" cy="172" r="22" stroke="{TONE[6]}" stroke-width="1.6" fill="none" opacity="0.8"/>')
-    for i in range(3):
-        body.append(_figure(W * r.between(0.2, 0.8), H * r.between(0.82, 0.96), r.between(28, 40), TONE[0]))
+    # Floodlight pylons
+    for x in (30, W - 30):
+        body.append(f'<rect x="{x - 1.5:.0f}" y="26" width="3" height="52" fill="{TONE[1]}"/>')
+        body.append(f'<rect x="{x - 18:.0f}" y="12" width="36" height="18" rx="2" fill="{TONE[0]}"/>')
+        for row in range(2):
+            for col in range(5):
+                body.append(
+                    f'<circle cx="{x - 14 + col * 7:.0f}" cy="{17 + row * 8}" r="2.4" '
+                    f'fill="{TONE[6]}" opacity="0.9"/>'
+                )
+    # Tiered stands, curving round the top of the ground
+    body.append(f'<path d="M0 96 Q{cx:.0f} 56 {W} 96 L{W} 74 Q{cx:.0f} 36 0 74 Z" fill="{TONE[1]}"/>')
+    body.append(f'<path d="M0 112 Q{cx:.0f} 74 {W} 112 L{W} 96 Q{cx:.0f} 56 0 96 Z" fill="{TONE[2]}"/>')
+    for _ in range(150):
+        u = r.next()
+        x = u * W
+        arc = 96 - 40 * (1 - ((x - cx) / cx) ** 2)
+        y = arc + r.between(-20, 14)
+        body.append(
+            f'<circle cx="{x:.0f}" cy="{y:.0f}" r="{r.between(1.1, 2.2):.1f}" '
+            f'fill="{TONE[r.pick([0, 4, 5, 6])]}" opacity="0.8"/>'
+        )
+    # Sightscreen behind the bowler's end
+    body.append(f'<rect x="{cx - 24:.0f}" y="86" width="48" height="16" fill="{TONE[6]}" opacity="0.9"/>')
+    # Outfield, with mown bands
+    body.append(f'<path d="M0 112 Q{cx:.0f} 74 {W} 112 L{W} {H} L0 {H} Z" fill="{TONE[3]}"/>')
+    for i in range(6):
+        if i % 2:
+            continue
+        y0 = 118 + i * 14
+        body.append(
+            f'<path d="M0 {y0} Q{cx:.0f} {y0 - 30:.0f} {W} {y0} L{W} {y0 + 14} '
+            f'Q{cx:.0f} {y0 - 16:.0f} 0 {y0 + 14} Z" fill="{TONE[4]}" opacity="0.28"/>'
+        )
+    # Boundary rope
+    body.append(
+        f'<path d="M0 126 Q{cx:.0f} 88 {W} 126" stroke="{TONE[6]}" '
+        f'stroke-width="1.8" fill="none" opacity="0.85"/>'
+    )
+    # The square, and the pitch running away in perspective
+    body.append(f'<ellipse cx="{cx:.0f}" cy="168" rx="66" ry="26" fill="{TONE[4]}" opacity="0.35"/>')
+    body.append(
+        f'<path d="M{cx - 9:.0f} 138 L{cx + 9:.0f} 138 L{cx + 19:.0f} 196 '
+        f'L{cx - 19:.0f} 196 Z" fill="{TONE[6]}" opacity="0.92"/>'
+    )
+    for y, half in ((142, 7), (190, 15)):
+        body.append(
+            f'<line x1="{cx - half:.0f}" y1="{y}" x2="{cx + half:.0f}" y2="{y}" '
+            f'stroke="{TONE[2]}" stroke-width="1.2" opacity="0.8"/>'
+        )
+    # Stumps at both ends
+    for y, sp, hgt in ((142, 2.2, 7), (190, 3.4, 11)):
+        for k in (-1, 0, 1):
+            body.append(
+                f'<rect x="{cx + k * sp:.1f}" y="{y - hgt:.0f}" width="1.2" '
+                f'height="{hgt}" fill="{TONE[0]}"/>'
+            )
+    # Batter, bowler, a fielder wide of the square
+    body.append(_figure(cx - 13, 192, 26, TONE[0]))
+    body.append(_figure(cx + 6, 146, 17, TONE[0]))
+    body.append(_figure(W * r.between(0.14, 0.28), 176, 20, TONE[1]))
+    body.append(_figure(W * r.between(0.74, 0.88), 170, 19, TONE[1]))
+    return "".join(body)
+
+
+def _chamber(r: _Rand, uid: str) -> str:
+    """A legislature chamber — the picture a political story wants.
+
+    Tiered benches curving away from a raised speaker's dais. Drawn rather
+    than photographed, so it carries no claim to be a particular sitting.
+    """
+    cx = W / 2
+    body = [f'<rect width="{W}" height="{H}" fill="url(#sky{uid})"/>']
+    # Panelled rear wall
+    body.append(f'<rect x="0" y="0" width="{W}" height="{H * 0.40:.0f}" fill="{TONE[3]}" opacity="0.55"/>')
+    for x in range(0, W, 15):
+        body.append(f'<rect x="{x}" y="0" width="7" height="{H * 0.40:.0f}" fill="{TONE[2]}" opacity="0.30"/>')
+    # Speaker's canopy, chair and dais
+    body.append(f'<path d="M{cx - 38:.0f} 40 L{cx + 38:.0f} 40 L{cx + 27:.0f} 10 L{cx - 27:.0f} 10 Z" fill="{TONE[1]}"/>')
+    body.append(f'<rect x="{cx - 15:.0f}" y="40" width="30" height="26" rx="3" fill="{TONE[0]}"/>')
+    body.append(f'<circle cx="{cx:.0f}" cy="26" r="7" fill="{TONE[5]}" opacity="0.85"/>')
+    body.append(f'<rect x="{cx - 30:.0f}" y="66" width="60" height="9" fill="{TONE[1]}"/>')
+    # Four tiers of benches, each a shallow arc, members seated behind
+    for row in range(4):
+        base = H * (0.50 + row * 0.125)
+        seats = 6 - row
+        tone = TONE[max(0, 2 - row // 2)]
+        for i in range(seats):
+            x = W * (i + 0.5) / seats + r.between(-5, 5)
+            if abs(x - cx) < 22 and row == 0:
+                continue
+            body.append(_figure(x, base + 3, 30 + row * 5, tone))
+        dip = 7 + row * 2
+        body.append(
+            f'<path d="M0 {base:.0f} Q{cx:.0f} {base + dip:.0f} {W} {base:.0f} '
+            f'L{W} {base + 15 + row * 3:.0f} L0 {base + 15 + row * 3:.0f} Z" '
+            f'fill="{TONE[min(6, 4 + row // 2)]}"/>'
+        )
+        body.append(
+            f'<path d="M0 {base:.0f} Q{cx:.0f} {base + dip:.0f} {W} {base:.0f}" '
+            f'stroke="{TONE[1]}" stroke-width="1.2" fill="none" opacity="0.55"/>'
+        )
+        # desk microphones
+        for i in range(seats):
+            x = W * (i + 0.5) / seats
+            if abs(x - cx) < 22 and row == 0:
+                continue
+            my = base + dip * (1 - ((x - cx) / cx) ** 2) + 4
+            body.append(f'<rect x="{x:.0f}" y="{my - 9:.0f}" width="1.2" height="9" fill="{TONE[0]}" opacity="0.8"/>')
+    return "".join(body)
+
+
+def _secretariat(r: _Rand, uid: str) -> str:
+    """A government building front — for scheme and administration stories."""
+    body = [f'<rect width="{W}" height="{H}" fill="url(#sky{uid})"/>']
+    cx = W / 2
+    ground = H * 0.86
+    # Dome and flagstaff over a central bay
+    body.append(f'<rect x="{cx - 1:.0f}" y="14" width="2" height="20" fill="{TONE[1]}"/>')
+    body.append(f'<path d="M{cx - 2:.0f} 15 L{cx + 20:.0f} 21 L{cx - 2:.0f} 27 Z" fill="{TONE[2]}"/>')
+    body.append(f'<path d="M{cx - 26:.0f} 62 Q{cx:.0f} 24 {cx + 26:.0f} 62 Z" fill="{TONE[1]}"/>')
+    body.append(f'<rect x="{cx - 30:.0f}" y="62" width="60" height="6" fill="{TONE[0]}"/>')
+    # Facade with an arcade of arches on two storeys
+    body.append(f'<rect x="14" y="68" width="{W - 28}" height="{ground - 68:.0f}" fill="{TONE[2]}"/>')
+    body.append(f'<rect x="14" y="68" width="{W - 28}" height="7" fill="{TONE[0]}"/>')
+    for storey, (top, hgt) in enumerate([(84, 34), (128, 34)]):
+        for i in range(9):
+            x = 22 + i * ((W - 44) / 9)
+            aw = (W - 44) / 9 - 8
+            body.append(
+                f'<path d="M{x:.0f} {top + hgt:.0f} L{x:.0f} {top + aw / 2:.0f} '
+                f'Q{x + aw / 2:.0f} {top - 2:.0f} {x + aw:.0f} {top + aw / 2:.0f} '
+                f'L{x + aw:.0f} {top + hgt:.0f} Z" fill="{TONE[max(0, 5 - storey * 4)]}" opacity="0.9"/>'
+            )
+        body.append(f'<rect x="14" y="{top + hgt + 2:.0f}" width="{W - 28}" height="4" fill="{TONE[1]}"/>')
+    body.append(f'<rect x="0" y="{ground:.0f}" width="{W}" height="{H - ground:.0f}" fill="{TONE[4]}"/>')
+    for i in range(4):
+        body.append(_figure(W * r.between(0.12, 0.88), H * r.between(0.94, 0.99), r.between(20, 28), TONE[0]))
+    return "".join(body)
+
+
+def _hockey(r: _Rand, uid: str) -> str:
+    """A floodlit hockey pitch — goal, striking circle, players.
+
+    Kept separate from the cricket ground on purpose: a hockey report
+    illustrated with stumps and a pitch strip is simply the wrong picture.
+    """
+    cx = W / 2
+    body = [f'<rect width="{W}" height="{H}" fill="url(#sky{uid})"/>']
+    for x in (32, W - 32):
+        body.append(f'<rect x="{x - 1.5:.0f}" y="24" width="3" height="46" fill="{TONE[1]}"/>')
+        body.append(f'<rect x="{x - 16:.0f}" y="12" width="32" height="15" rx="2" fill="{TONE[0]}"/>')
+        for col in range(4):
+            body.append(f'<circle cx="{x - 11 + col * 7:.0f}" cy="19" r="2.2" fill="{TONE[6]}" opacity="0.9"/>')
+    # Stand and crowd behind the goal
+    body.append(f'<path d="M0 100 Q{cx:.0f} 66 {W} 100 L{W} 72 Q{cx:.0f} 40 0 72 Z" fill="{TONE[2]}"/>')
+    for _ in range(110):
+        x = r.next() * W
+        arc = 100 - 34 * (1 - ((x - cx) / cx) ** 2)
+        body.append(
+            f'<circle cx="{x:.0f}" cy="{arc + r.between(-20, 8):.0f}" r="{r.between(1.1, 2.1):.1f}" '
+            f'fill="{TONE[r.pick([0, 4, 5, 6])]}" opacity="0.8"/>'
+        )
+    # Blue synthetic turf
+    body.append(f'<path d="M0 100 Q{cx:.0f} 66 {W} 100 L{W} {H} L0 {H} Z" fill="{TONE[3]}"/>')
+    body.append(f'<path d="M0 118 Q{cx:.0f} 86 {W} 118" stroke="{TONE[6]}" stroke-width="1.4" fill="none" opacity="0.7"/>')
+    # Goal and the striking circle in front of it
+    body.append(f'<rect x="{cx - 26:.0f}" y="96" width="52" height="22" fill="{TONE[6]}" opacity="0.22"/>')
+    body.append(f'<rect x="{cx - 26:.0f}" y="96" width="52" height="22" stroke="{TONE[6]}" stroke-width="1.6" fill="none"/>')
+    body.append(
+        f'<path d="M{cx - 78:.0f} 152 Q{cx:.0f} 104 {cx + 78:.0f} 152" '
+        f'stroke="{TONE[6]}" stroke-width="1.5" fill="none" opacity="0.85"/>'
+    )
+    body.append(f'<circle cx="{cx:.0f}" cy="150" r="2.4" fill="{TONE[6]}"/>')
+    # Players, sticks lowered toward the ball
+    for x, base, hgt, tone in (
+        (cx - 34, 168, 34, TONE[0]), (cx + 22, 160, 30, TONE[1]),
+        (cx + 52, 182, 33, TONE[0]), (cx - 66, 178, 31, TONE[1]),
+        (cx - 6, 132, 22, TONE[0]),
+    ):
+        body.append(_figure(x, base, hgt, tone))
+        body.append(
+            f'<path d="M{x + 5:.0f} {base - hgt * 0.34:.0f} L{x + 13:.0f} {base - 3:.0f} '
+            f'Q{x + 16:.0f} {base:.0f} {x + 11:.0f} {base:.0f}" stroke="{TONE[6]}" '
+            f'stroke-width="1.6" fill="none" opacity="0.9"/>'
+        )
     return "".join(body)
 
 
@@ -302,6 +478,9 @@ def _stage(r: _Rand, uid: str) -> str:
 
 SCENES = {
     "portrait": _portrait,
+    "chamber": _chamber,
+    "hockey": _hockey,
+    "secretariat": _secretariat,
     "dais": _dais,
     "assembly": _assembly,
     "city": _city,

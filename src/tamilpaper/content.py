@@ -57,7 +57,7 @@ DEFAULTS: dict[str, dict] = {
 }
 
 FIGURE_DEFAULTS = {"svg": "", "src": "", "alt": "", "caption": "", "credit": "",
-                   "ratio": "3 / 2", "palette": None}
+                   "ratio": "3 / 2", "palette": None, "subject": ""}
 
 
 def _apply_defaults(block: dict) -> None:
@@ -93,11 +93,56 @@ def _inline_photo(src: str) -> str:
     return f"data:{mime};base64,{encoded}"
 
 
+_LIBRARY_PATH = ROOT / "assets" / "photos" / "library.json"
+_library_cache: dict | None = None
+
+
+def picture_library() -> dict:
+    """Standing file pictures, keyed by subject.
+
+    A paper keeps a picture library: when a story is about the assembly you
+    run the assembly picture, not a shape. The edition names a ``subject`` and
+    this decides what it gets — the filed photograph when one exists, and the
+    scene drawn for that subject when it does not. Filing a photograph later
+    upgrades every story that asks for the subject, with no edition to edit.
+    """
+    global _library_cache
+    if _library_cache is None:
+        if _LIBRARY_PATH.is_file():
+            _library_cache = json.loads(_LIBRARY_PATH.read_text(encoding="utf-8")).get("subjects", {})
+        else:
+            _library_cache = {}
+    return _library_cache
+
+
+def _apply_subject(fig: dict) -> None:
+    """Fill a figure's picture from the library entry its subject names."""
+    subject = fig.get("subject")
+    if not subject:
+        return
+    entry = picture_library().get(subject)
+    if entry is None:
+        known = ", ".join(sorted(picture_library())) or "none filed"
+        raise ContentError(f"unknown picture subject {subject!r}; filed subjects: {known}")
+    filed = entry.get("file")
+    if filed and (ROOT / filed).is_file() and not fig.get("src"):
+        fig["src"] = filed
+        if not fig.get("credit"):
+            fig["credit"] = entry.get("credit", "")
+    elif not fig.get("src") and not fig.get("scene"):
+        fig["scene"] = entry.get("scene", "")
+        if not fig.get("credit"):
+            fig["credit"] = "விளக்கப் படம்"
+    if not fig.get("alt"):
+        fig["alt"] = entry.get("alt", "")
+
+
 def _resolve_figure(fig: dict, seed: str, palette: str | None = None) -> dict:
     """Inline a real photograph, or draw a stand-in from ``scene``."""
     fig = dict(fig)
     for key, value in FIGURE_DEFAULTS.items():
         fig.setdefault(key, value)
+    _apply_subject(fig)
     src = fig.get("src")
     if src and not src.startswith(("data:", "http://", "https://")):
         fig["src"] = _inline_photo(src)
