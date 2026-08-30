@@ -18,7 +18,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -351,3 +351,44 @@ class TestEndToEnd(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+class NewEditionSkeleton(unittest.TestCase):
+    """The morning routine starts from a generated skeleton, so it has to be
+    valid on any date — a broken one means no paper that morning."""
+
+    def _build(self, iso):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "new_edition", ROOT / "tools" / "new_edition.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod, mod.build(date.fromisoformat(iso))
+
+    def test_every_page_covers_its_grid(self):
+        for iso in ("2026-08-31", "2026-09-15", "2027-01-01", "2026-12-25"):
+            _, edition = self._build(iso)
+            for page in edition["pages"]:
+                used = sum(b["col"] * b["row"] for b in page["blocks"])
+                self.assertEqual(used, page["cols"] * page["rows"],
+                                 f"{iso} page {page['number']} leaves the grid uncovered")
+
+    def test_it_loads_like_any_edition(self):
+        """A skeleton that will not load is a morning with no paper."""
+        _, edition = self._build("2026-08-31")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "skeleton.json"
+            path.write_text(json.dumps(edition, ensure_ascii=False), encoding="utf-8")
+            loaded = content.load(path)
+        self.assertEqual(len(loaded["pages"]), 3)
+
+    def test_weekday_is_named_in_tamil(self):
+        _, edition = self._build("2026-08-31")          # a Monday
+        self.assertEqual(edition["paper"]["weekday_ta"], "திங்கட்கிழமை")
+
+    def test_tamil_month_is_blank_rather_than_guessed(self):
+        """Counting off the one sourced anchor is safe inside Aavani and
+        nowhere else, so a far-off date must leave the field empty."""
+        mod, _ = self._build("2026-08-31")
+        self.assertEqual(mod.tamil_month_day(date(2026, 8, 30)), "ஆவணி 13")
+        self.assertEqual(mod.tamil_month_day(date(2027, 3, 1)), "")
+

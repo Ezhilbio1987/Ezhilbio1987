@@ -178,6 +178,27 @@ stories.
 8. **Do not translate a claim into a stronger one.** "may rise" is not
    "will rise"; "sources said" is not "the government announced".
 
+## 2a. Start from the skeleton
+
+Do not compose a page grid by hand. Every page has to be covered exactly or
+the build refuses, and getting there costs more effort than writing the copy
+does — which is how two unattended runs finished with nothing to show.
+
+```bash
+python3 tools/new_edition.py -o content/daily.json     # today, three pages
+python3 tools/new_edition.py --date 2026-09-01 -o content/daily.json
+```
+
+That writes a dated three-page edition that **builds as it stands**: masthead,
+weekday in Tamil, the weekday-fixed panchangam rows, a weather box and map,
+five story slots and about 80 brief slots, all sized so a filled page comes out
+near 100% without re-fitting. Replace the placeholder copy with the day's news
+and rebuild. Add pages 4 and 5 afterwards if there is room.
+
+The Tamil month is counted off the one date this repo has from a source, so it
+is right inside Aavani and **left blank** outside it rather than guessed —
+fill it from the day's panchangam.
+
 ## 3. Build
 
 ```bash
