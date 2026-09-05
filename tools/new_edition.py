@@ -78,7 +78,7 @@ def story(sid, col, row, columns, kicker, headline, place, variant, subject=None
     return block
 
 
-def build(day: dt.date) -> dict:
+def build(day: dt.date, pages: int = 3) -> dict:
     numeric = day.strftime("%d.%m.%Y")
     weekday = WEEKDAY_TA[day.weekday()]
     tamil_day = tamil_month_day(day)
@@ -98,9 +98,9 @@ def build(day: dt.date) -> dict:
         "date_numeric": numeric,
         "footline_note": f"காலைப் பதிப்பு · {numeric}",
         "dateline_ta": ["காலைப் பதிப்பு", "சென்னை", weekday, tamil_day, numeric,
-                        "இணையப் பதிப்பு", "பக்கம் – 3"],
+                        "இணையப் பதிப்பு", f"பக்கம் – {pages}"],
         "dateline_en": ["Morning Edition", "Chennai", day.strftime("%A"),
-                        tamil_day, numeric, "Online", "Pages – 3"],
+                        tamil_day, numeric, "Online", f"Pages – {pages}"],
     }
 
     page1 = {"number": 1, "kind": "front", "cols": 5, "rows": 11,
@@ -169,13 +169,30 @@ def build(day: dt.date) -> dict:
         briefs("b-world", "உலகம் · பொருளாதாரம்", 5, 3, 12),
     ]}
 
-    for page in (page1, page2, page3):
+    # A two-page paper is not three pages with one thrown away: the inner page
+    # has to carry the local report, the city and district briefs, the
+    # panchangam and the map between them, so it is laid out on its own.
+    page_inner = {"number": 2, "kind": "inner",
+                  "section": "நகரம் · மாவட்டங்கள் · வானிலை",
+                  "cols": 5, "rows": 12, "accent": "#0f766e", "palette": "sea",
+                  "blocks": [
+        story("s-local", 3, 3, 3, "நகரச் செய்தி", "உள்ளூர்ச் செய்தி",
+              f"சென்னை, {day.day}", "lead", None, 5),
+        page3["blocks"][1],                      # the panchangam table, 2x3
+        briefs("b-city", "சென்னை", 3, 3, 9),
+        briefs("b-districts", "மாவட்டங்கள்", 2, 3, 6),
+        page3["blocks"][4],                      # the weather map, 5x3
+        briefs("b-world", "நாடு · உலகம்", 5, 3, 12),
+    ]}
+
+    chosen = [page1, page_inner] if pages == 2 else [page1, page2, page3]
+    for page in chosen:
         used = sum(b["col"] * b["row"] for b in page["blocks"])
         want = page["cols"] * page["rows"]
         assert used == want, f"page {page['number']}: covers {used} of {want} cells"
 
     return {"paper": paper, "press": {"preset": "tabloid"}, "palette": "civic",
-            "pages": [page1, page2, page3]}
+            "pages": chosen}
 
 
 def main() -> int:
@@ -183,9 +200,11 @@ def main() -> int:
     ap.add_argument("--date", default=dt.date.today().isoformat(),
                     help="edition date, YYYY-MM-DD (default: today)")
     ap.add_argument("-o", "--out", default="content/daily.json")
+    ap.add_argument("--pages", type=int, choices=(2, 3), default=3,
+                    help="how many pages to lay out (default: 3)")
     args = ap.parse_args()
 
-    edition = build(dt.date.fromisoformat(args.date))
+    edition = build(dt.date.fromisoformat(args.date), args.pages)
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(edition, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -193,7 +212,7 @@ def main() -> int:
     items = sum(len(b["items"]) for p in edition["pages"] for b in p["blocks"]
                 if b["type"] == "briefs")
     stories = sum(1 for p in edition["pages"] for b in p["blocks"] if b["type"] == "story")
-    print(f"{out}  ·  3 pages, {stories} story slots, {items} brief slots")
+    print(f"{out}  ·  {len(edition['pages'])} pages, {stories} story slots, {items} brief slots")
     if not tamil_month_day(dt.date.fromisoformat(args.date)):
         print("  note: Tamil month left blank — outside the range this can count off. "
               "Fill it from today's panchangam.")

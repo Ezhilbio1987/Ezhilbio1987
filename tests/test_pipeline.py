@@ -356,21 +356,32 @@ class NewEditionSkeleton(unittest.TestCase):
     """The morning routine starts from a generated skeleton, so it has to be
     valid on any date — a broken one means no paper that morning."""
 
-    def _build(self, iso):
+    def _build(self, iso, pages=3):
         import importlib.util
         spec = importlib.util.spec_from_file_location(
             "new_edition", ROOT / "tools" / "new_edition.py")
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
-        return mod, mod.build(date.fromisoformat(iso))
+        return mod, mod.build(date.fromisoformat(iso), pages)
 
     def test_every_page_covers_its_grid(self):
-        for iso in ("2026-08-31", "2026-09-15", "2027-01-01", "2026-12-25"):
-            _, edition = self._build(iso)
-            for page in edition["pages"]:
-                used = sum(b["col"] * b["row"] for b in page["blocks"])
-                self.assertEqual(used, page["cols"] * page["rows"],
-                                 f"{iso} page {page['number']} leaves the grid uncovered")
+        for pages in (2, 3):
+            for iso in ("2026-08-31", "2026-09-15", "2027-01-01", "2026-12-25"):
+                _, edition = self._build(iso, pages)
+                self.assertEqual(len(edition["pages"]), pages)
+                for page in edition["pages"]:
+                    used = sum(b["col"] * b["row"] for b in page["blocks"])
+                    self.assertEqual(used, page["cols"] * page["rows"],
+                                     f"{iso} {pages}pp page {page['number']} uncovered")
+
+    def test_two_page_edition_keeps_the_daily_furniture(self):
+        """Folding three pages into two must not quietly drop the panchangam
+        or the map — they are what the reader turns to first."""
+        _, edition = self._build("2026-08-31", 2)
+        ids = {b["id"] for page in edition["pages"] for b in page["blocks"]}
+        for needed in ("t-panchangam", "wx-map", "t-weather", "b-city", "b-districts"):
+            self.assertIn(needed, ids)
+        self.assertIn("2", edition["paper"]["dateline_ta"][-1])
 
     def test_it_loads_like_any_edition(self):
         """A skeleton that will not load is a morning with no paper."""
