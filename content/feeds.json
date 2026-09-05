@@ -7,7 +7,13 @@
     "the story lands on and must match a section in the fetch command.",
     "",
     "Verify each URL before relying on it — publishers move and retire feeds.",
-    "Run: python3 tools/fetch_news.py --check-feeds"
+    "Run: python3 tools/fetch_news.py --check-feeds",
+    "",
+    "A WordPress site publishes its feed at /feed/ without being asked, which",
+    "is where the வி நியூஸ் தமிழ் entry points. Note that turning a site into",
+    "a feed does not get past an egress policy: the block is on the hostname,",
+    "so /feed/ is refused exactly as the front page is, and the public feed",
+    "generators are refused too. Feeds pay off where the network is open."
   ],
 
   "sections": ["தமிழ்நாடு", "இந்தியா", "உலகம்", "வணிகம்", "விளையாட்டு"],
@@ -31,6 +37,9 @@
       "url": "https://tamil.thehindu.com/business/feeder/default.rss" },
     { "name": "தி இந்து தமிழ்",   "language": "ta", "section": "விளையாட்டு",
       "url": "https://tamil.thehindu.com/sports/feeder/default.rss" },
+
+    { "name": "வி நியூஸ் தமிழ்",  "language": "ta", "section": "தமிழ்நாடு",
+      "url": "https://vnewstamil.com/feed/" },
 
     { "name": "BBC தமிழ்",        "language": "ta", "section": "இந்தியா",
       "url": "https://feeds.bbci.co.uk/tamil/rss.xml" },
