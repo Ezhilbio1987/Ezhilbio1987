@@ -403,3 +403,60 @@ class NewEditionSkeleton(unittest.TestCase):
         self.assertEqual(mod.tamil_month_day(date(2026, 8, 30)), "ஆவணி 13")
         self.assertEqual(mod.tamil_month_day(date(2027, 3, 1)), "")
 
+class FeedFromFile(unittest.TestCase):
+    """A publisher can be out of network reach while its feed is perfectly
+    readable — someone opens it in a browser and saves it. That file has to
+    compose into the same edition a fetched feed would have produced."""
+
+    SAMPLE = (
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<rss version="2.0"><channel>'
+        '<title>\u0bb5\u0bbf \u0ba8\u0bbf\u0baf\u0bc2\u0bb8\u0bcd</title>'
+        '<link>https://example.invalid/</link><description>x</description>'
+        '<item><title>\u0ba4\u0bb2\u0bc8\u0baa\u0bcd\u0baa\u0bc1 1</title>'
+        '<link>https://example.invalid/1/</link>'
+        '<description>\u0b9a\u0bc1\u0bb0\u0bc1\u0b95\u0bcd\u0b95\u0bae\u0bcd</description>'
+        '<pubDate>{when}</pubDate></item>'
+        '</channel></rss>'
+    )
+
+    def _run(self, *extra):
+        import email.utils
+        from datetime import timezone
+        when = email.utils.format_datetime(datetime.now(timezone.utc))
+        with tempfile.TemporaryDirectory() as tmp:
+            feed = Path(tmp) / "handed-over.xml"
+            feed.write_text(self.SAMPLE.format(when=when), encoding="utf-8")
+            out = Path(tmp) / "draft.json"
+            code = subprocess.run(
+                [sys.executable, str(ROOT / "tools" / "fetch_news.py"),
+                 "--from-file", str(feed), "-o", str(out), *extra],
+                capture_output=True, text=True)
+            return code, (json.loads(out.read_text(encoding="utf-8"))
+                          if out.exists() else None)
+
+    def test_it_composes_an_edition_from_the_file(self):
+        proc, edition = self._run()
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIsNotNone(edition)
+        self.assertTrue(edition["pages"])
+
+    def test_the_credit_is_the_publishers_own_name(self):
+        """A paper credits the publication, never the file it arrived in.
+        The console line may name the file too — that is provenance, and
+        useful — but nothing printed on the page may."""
+        proc, edition = self._run()
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        printed = json.dumps(edition, ensure_ascii=False)
+        self.assertIn("\u0bb5\u0bbf \u0ba8\u0bbf\u0baf\u0bc2\u0bb8\u0bcd", printed)
+        self.assertNotIn("handed-over", printed)
+        self.assertNotIn(".xml", printed)
+
+    def test_a_missing_file_fails_loudly(self):
+        proc = subprocess.run(
+            [sys.executable, str(ROOT / "tools" / "fetch_news.py"),
+             "--from-file", "/nonexistent/feed.xml", "--dry-run"],
+            capture_output=True, text=True)
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("no such file", proc.stderr)
+

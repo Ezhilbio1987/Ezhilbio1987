@@ -52,6 +52,49 @@ def _print_report(report: news.FetchReport, verbose: bool = True) -> None:
     print("  " + ", ".join(bits))
 
 
+
+def _read_local_feeds(paths, section):
+    """Parse feed files someone handed us, as if they had been fetched.
+
+    An egress policy can put a publisher out of reach while its feed is still
+    perfectly readable — someone opens it in a browser and saves it. Parsing
+    that file through the same code path keeps the credit and the dating
+    identical to a fetched feed, so a paper built this way is not a lesser
+    one. Returns ``(None, None)`` when a file cannot be used.
+    """
+    stories, report = [], news.FetchReport()
+    for raw in paths:
+        path = Path(raw)
+        if not path.is_file():
+            print(f"  \u2717 {path}: no such file", file=sys.stderr)
+            return None, None
+        payload = path.read_bytes()
+        name = _channel_title(payload) or path.stem
+        feed = news.Feed(name=name, url=path.as_uri(), section=section, language="ta")
+        try:
+            found = news.parse_feed(payload, feed)
+        except news.FeedError as err:
+            print(f"  \u2717 {err}", file=sys.stderr)
+            return None, None
+        stories.extend(found)
+        report.ok.append((f"{name} ({path.name})", len(found)))
+    return stories, report
+
+
+def _channel_title(payload: bytes) -> str:
+    """The publication's own name, so the credit is the publisher's not ours."""
+    from xml.etree import ElementTree
+    try:
+        root = ElementTree.fromstring(payload)
+    except ElementTree.ParseError:
+        return ""
+    for path in ("./channel/title", "./{http://www.w3.org/2005/Atom}title", "./title"):
+        node = root.find(path)
+        if node is not None and (node.text or "").strip():
+            return node.text.strip()
+    return ""
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -71,6 +114,12 @@ def main(argv: list[str] | None = None) -> int:
                     help="keep only feeds in this language")
     ap.add_argument("--max-per-section", type=int, default=14,
                     help="most stories to carry per section")
+    ap.add_argument("--from-file", action="append", default=[], metavar="PATH",
+                    help="read a feed from a local XML file instead of the network; "
+                         "repeatable. Use when the network cannot reach the publisher "
+                         "and someone hands you the feed.")
+    ap.add_argument("--from-file-section", default="தமிழ்நாடு", metavar="SECTION",
+                    help="section for --from-file feeds (default: தமிழ்நாடு)")
     ap.add_argument("--offline", action="store_true", help="read the cache instead of the network")
     ap.add_argument("--no-cache", action="store_true", help="do not write the cache")
     ap.add_argument("--dry-run", action="store_true", help="list what was fetched and stop")
@@ -119,11 +168,19 @@ def main(argv: list[str] | None = None) -> int:
         print(f"{good} of {len(feeds)} feed(s) usable")
         return 0 if good else 1
 
-    print(f"Fetching {len(feeds)} feed(s) for {day:%Y-%m-%d}"
-          + (" (offline)" if args.offline else "") + "...")
-    stories, report = news.fetch(
-        feeds, day=day, window_hours=args.window,
-        cache_dir=None if args.no_cache else CACHE, offline=args.offline)
+    if args.from_file:
+        print(f"Reading {len(args.from_file)} feed file(s) for {day:%Y-%m-%d}...")
+    else:
+        print(f"Fetching {len(feeds)} feed(s) for {day:%Y-%m-%d}"
+              + (" (offline)" if args.offline else "") + "...")
+    if args.from_file:
+        stories, report = _read_local_feeds(args.from_file, args.from_file_section)
+        if stories is None:
+            return 1
+    else:
+        stories, report = news.fetch(
+            feeds, day=day, window_hours=args.window,
+            cache_dir=None if args.no_cache else CACHE, offline=args.offline)
     _print_report(report)
 
     if not stories:
